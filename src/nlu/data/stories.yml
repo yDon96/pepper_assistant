@@ -1,0 +1,29 @@
+version: "2.0"
+
+stories:
+
+- story: Remove from list
+  steps: 
+  - intent: remove_from_list
+  - action: action_remove_view
+  - intent: product
+  - action: action_remove
+  - action: utter_what_to_do
+
+
+- story: happy path continue
+  steps:
+  - intent: greet 
+  - action: utter_greet 
+  - intent: mood_great 
+  - action: utter_happy_presentation
+  - action: utter_what_to_do
+  
+- story: sad path continue
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_sad_presentation
+  - action: utter_what_to_do
+
