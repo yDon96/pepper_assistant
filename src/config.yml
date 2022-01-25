@@ -5,7 +5,7 @@ topics:
 
 
 nodes:
-    voiceRecorder: 'voice_detection_node'
+    voiceRecorder: 'voice_recorder_node'
     asr: 'speech_recognition'
     reidentification: 'reidentification_node'
 
