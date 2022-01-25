@@ -61,7 +61,8 @@ def listener(config):
     rospy.spin()
         
 if __name__ == '__main__':
-    with open('config.yml') as file:
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
     
     init_node(config)

@@ -6,6 +6,7 @@ import yaml
 from speech_recognition import AudioData
 import speech_recognition as sr
 from speech_recognition import UnknownValueError, RequestError
+import os
 
 # this is called from the background thread
 def callback(audio, recognizer, data_publisher, text_publisher, config):
@@ -41,7 +42,8 @@ def listener(data_publisher, text_publisher, config):
     rospy.spin()
 
 if __name__ == '__main__':
-    with open('config.yml') as file:
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
 
     data_publisher, text_publisher = init_node(config)

@@ -5,6 +5,7 @@ import numpy as np
 import yaml
 import time
 import speech_recognition as sr
+import os
 
 def callback(recognizer, audio, pub):
     data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
@@ -65,7 +66,8 @@ def init_node(config):
             publisher)
 
 if __name__ == '__main__':
-    with open('config.yml') as file:
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
 
     init_node(config)
