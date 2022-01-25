@@ -2,14 +2,11 @@ import librosa
 import numpy as np
 from python_speech_features import fbank
 
-from .constants import SAMPLE_RATE, NUM_FBANKS, NUM_FRAMES
-
-
 def read_audio(path, sample_rate):
     return librosa.load(path, sr=sample_rate)[0]
 
 
-def get_mfcc(audio, sample_rate):
+def get_mfcc(audio, sample_rate, num_fbanks):
     audio_voice_only = audio
 
     energy = np.abs(audio)
@@ -17,7 +14,7 @@ def get_mfcc(audio, sample_rate):
     offsets = np.where(energy > silence_threshold)[0]
     audio_voice_only = audio[offsets[0]:offsets[-1]]
 
-    mfcc = mfcc_fbank(audio_voice_only, sample_rate)
+    mfcc = mfcc_fbank(audio_voice_only, sample_rate, num_fbanks)
 
     return mfcc
 
@@ -33,10 +30,10 @@ def pad_mfcc(mfcc, max_length):  # num_frames, nfilt=64.
     return mfcc
 
 
-def mfcc_fbank(signal: np.array, sample_rate: int):  # 1D signal array.
+def mfcc_fbank(signal: np.array, sample_rate: int, num_fbanks: int):  # 1D signal array.
     # Returns MFCC with shape (num_frames, n_filters, 3).
     filter_banks, energies = fbank(
-        signal, samplerate=sample_rate, nfilt=NUM_FBANKS)
+        signal, samplerate=sample_rate, nfilt=num_fbanks)
 
     frames_features = normalize_frames(filter_banks)
     # delta_1 = delta(filter_banks, N=1)

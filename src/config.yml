@@ -15,6 +15,7 @@ settings:
     chunkSize: 1024
     calibrationTime: 3
     identificationThreshold: 0.75
+    numFbanks: 64
 
 models:
     defaults: 'models/deep_speaker.h5'

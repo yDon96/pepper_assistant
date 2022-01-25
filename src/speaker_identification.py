@@ -19,14 +19,14 @@ def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
     return get_deep_speaker(os.path.join(REF_PATH, path))
 
-def callback(audio, sample_rate, speaker_model, identification_threshold):
+def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold):
     audio_data = np.array(audio.data)
 
     # to float32
     audio_data = audio_data.astype(np.float32, order='C') / 32768.0
 
     # Processing
-    ukn = get_mfcc(audio_data, sample_rate)
+    ukn = get_mfcc(audio_data, sample_rate, num_fbanks)
 
     # Prediction
     ukn = speaker_model.predict(np.expand_dims(ukn, 0))
@@ -54,10 +54,11 @@ def init_node(config):
 
 def listener(config):
     sample_rate = config['settings']['sampleRate']
+    num_fbanks = config['settings']['numFbanks']
     model_path = config['models']['defaults']
     identification_threshold = config['settings']['identificationThreshold']
     speaker_model = get_model(model_path)
-    rospy.Subscriber(config['topics']['voiceData'], Int16MultiArray, lambda audio : callback(audio, sample_rate, speaker_model, identification_threshold))
+    rospy.Subscriber(config['topics']['voiceData'], Int16MultiArray, lambda audio : callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold))
     rospy.spin()
         
 if __name__ == '__main__':
