@@ -1,0 +1,20 @@
+topics:
+    microphone: 'mic_data'
+    voiceData: 'voice_data'
+    voiceText: 'voice_txt'
+
+
+nodes:
+    voiceRecorder: 'voice_detection_node'
+    asr: 'speech_recognition'
+    reidentification: 'reidentification_node'
+
+settings:
+    language: 'it-IT'
+    sampleRate: 16000
+    chunkSize: 1024
+    calibrationTime: 3
+    identificationThreshold: 0.75
+
+models:
+    defaults: 'models/deep_speaker.h5'
