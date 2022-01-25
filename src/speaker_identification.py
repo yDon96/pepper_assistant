@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from tensorflow.python.ops.gen_logging_ops import Print
 import rospy
 from std_msgs.msg import Int16MultiArray
 import numpy as np
