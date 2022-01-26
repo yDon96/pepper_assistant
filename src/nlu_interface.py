@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import yaml
 import rospy
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 
@@ -29,15 +29,21 @@ def main(service, interface):
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 
-def init_node():
-    rospy.init_node('writing')
-    rospy.wait_for_service('dialogue_server')
-    dialogue_service = rospy.ServiceProxy('dialogue_server', Dialogue)
+def init_node(config):
+    node_name = config['nodes']['nluInterface']
+    service_name = config['nodes']['nluServer']
+    rospy.init_node(node_name)
+    rospy.wait_for_service(service_name)
+    dialogue_service = rospy.ServiceProxy(service_name, Dialogue)
     return dialogue_service
 
 if __name__ == '__main__':
 
-    dialogue_service = init_node()
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
+        config = yaml.full_load(file)
+
+    dialogue_service = init_node(config)
     terminal = TerminalInterface()
 
     try: 

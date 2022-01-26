@@ -9,6 +9,7 @@ nodes:
     asr: 'speech_recognition'
     reidentification: 'reidentification_node'
     nluServer: 'nlu_service'
+    nluInterface: 'nlu_interface'
 
 settings:
     language: 'it-IT'
