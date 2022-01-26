@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-from rasa_ros.srv import Dialogue, DialogueResponse
+from pepper_assistant.srv import Dialogue, DialogueResponse
 import subprocess
 import rospy
 import requests
+import yaml
 
 
 def handle_service(req):
