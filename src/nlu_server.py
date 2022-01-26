@@ -44,6 +44,7 @@ if __name__ == '__main__':
 
     nlu_folder_path = config['nlu']['path']
     subprocess.Popen(['sh', './scripts/rasa_action.sh', nlu_folder_path]).wait()
+    subprocess.Popen(['sh', './scripts/rasa_server.sh', nlu_folder_path]).wait()
     try: 
         main()
     except rospy.ROSInterruptException as e:
