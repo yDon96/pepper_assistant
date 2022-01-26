@@ -20,12 +20,12 @@ class TerminalInterface:
 
 def main(service, interface):
     while not rospy.is_shutdown():
-        message = terminal.get_input()
+        message = interface.get_input()
         if message == 'exit': 
             break
         try:
             bot_answer = service(message)
-            terminal.print_output(bot_answer.answer)
+            interface.print_output(bot_answer.answer)
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 
