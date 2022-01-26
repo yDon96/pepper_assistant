@@ -42,9 +42,7 @@ if __name__ == '__main__':
     with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
 
-    nlu_folder_path = config['nlu']['path']
-    subprocess.Popen(['sh', './scripts/rasa_action.sh', nlu_folder_path]).wait()
-    subprocess.Popen(['sh', './scripts/rasa_server.sh', nlu_folder_path]).wait()
+    
     try: 
         main()
     except rospy.ROSInterruptException as e:
