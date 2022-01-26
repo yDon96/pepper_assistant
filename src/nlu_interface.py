@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from pepper_assistant.srv import Dialogue, DialogueResponse
+from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 
 class TerminalInterface:
     '''Class implementing a terminal i/o interface. 
