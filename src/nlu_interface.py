@@ -2,6 +2,7 @@
 import yaml
 import os
 import rospy
+from std_msgs.msg import String
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 
 class TerminalInterface:
