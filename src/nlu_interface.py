@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import yaml
+import os
 import rospy
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 
