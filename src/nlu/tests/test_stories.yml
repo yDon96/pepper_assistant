@@ -1,0 +1,40 @@
+#### This file contains tests to evaluate that your bot behaves as expected.
+#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
+
+
+stories:
+- story: Remove from list
+  steps:
+  - user: |
+      I want to remove a product.
+    intent: remove_from_list
+  - action: action_remove_view
+  - user: |
+     I want apples
+    intent: product
+  - action: action_remove
+  - action: utter_what_to_do
+
+- story: happy path continue
+  steps:
+  - user: |
+      hello there!
+  - intent: greet 
+  - action: utter_greet 
+  - user: |
+      so so perfect
+  - intent: mood_great 
+  - action: utter_happy_presentation
+  - action: utter_what_to_do
+
+- story: sad path continue
+  steps:
+  - user: |
+      hello!!
+  - intent: greet
+  - action: utter_greet
+  - user: |
+      very terrible..
+  - intent: mood_unhappy
+  - action: utter_sad_presentation
+  - action: utter_what_to_do

@@ -1,0 +1,39 @@
+version: "2.0"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+
+- rule: Visualize the list  
+  steps: 
+  - intent: view_the_list
+  - action: action_view
+  - action: utter_what_to_do
+
+- rule: stop conversation
+  steps:
+  - intent: deny
+  - action: utter_what_to_do
+
+- rule: add something to the list
+  steps:
+  - intent: add_to_list
+  - action: add_form
+  - active_loop: add_form
+  - active_loop: null
+  - action: action_add
+  - action: utter_what_to_do
+
+- rule: update something in the list
+  steps: 
+  - intent: update
+  - action: action_update_view
+  - action: update_form
+  - active_loop: update_form
+  - active_loop: null
+  - action: action_update
+  - action: utter_what_to_do

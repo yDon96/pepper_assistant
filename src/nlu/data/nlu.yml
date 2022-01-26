@@ -1,0 +1,379 @@
+version: "2.0"
+
+nlu:
+- intent: greet
+  examples: |
+    - [Pippo](user):  hey
+    - [Pippo](user):  hello
+    - [Pippo](user):  hi
+    - [Pippo](user):  hello there
+    - [asia](user):  good morning
+    - [asia](user):  good evening
+    - [asia](user):  moin
+    - [Pippo](user):  hey there
+    - [Pippo](user):  let's go
+    - [Pippo](user):  hey dude
+    - [tommy](user): goodmorning
+    - [tommy](user): goodevening
+    - [tommy](user): good afternoon
+    - [tommy](user): hi
+    - [jerry](user): hi
+    - [asia](user): hello
+    - [alice](user): hi
+    - [umberto](user): hello
+    - [marina](user): hiii
+    - [youssef](user): hello
+- intent: goodbye
+  examples: |
+    - [Pippo](user):  cu
+    - [tommy](user):  good by
+    - [Pippo](user):  cee you later
+    - [tommy](user):  good night
+    - [asia](user):  bye
+    - [asia](user):  goodbye
+    - [tommy](user):  have a nice day
+    - [Pippo](user):  see you around
+    - [Pippo](user):  bye bye
+    - [tommy](user):  see you later
+    - [sabrina](user): goodbye
+- intent: deny
+  examples: |
+    - [Pippo](user):  no
+    - [Pippo](user):  n
+    - [asia](user):  never
+    - [tommy](user):  I don't think so
+    - [tommy](user):  don't like that
+    - [tommy](user):  no way
+    - [asia](user):  not really
+
+- intent: update
+  examples: |
+    - [asia](user): Yes, i want to update a product.
+    - [asia](user): Yes, i want to update an element.
+    - [tommy](user): Yes, i want to modify a product in my shopping list.
+    - [asia](user): Yes, i want to update the quantity of a product.
+    - [tommy](user): Yes, put quantity [5](quantity) for the product [apple](product)
+    - [asia](user): Yes, put quantity [10](quantity) for the product [apple](product)
+    - [tommy](user): Yes, put quantity [2](quantity) for the product [apple](product)
+    - [tommy](user): Yes, put quantity [3](quantity) for the product [apple](product)
+
+- intent: mood_great
+  examples: |
+    - [asia](user):  perfect
+    - [asia](user):  great
+    - [tommy](user):  amazing
+    - [tommy](user):  feeling like a king
+    - [tommy](user):  wonderful
+    - [Pippo](user):  I am feeling very good
+    - [Pippo](user):  I am great
+    - [Pippo](user):  I am amazing
+    - [tommy](user):  I am going to save the world
+    - [tommy](user):  super stoked
+    - [Pippo](user):  extremely good
+    - [asia](user):  so so perfect
+    - [asia](user):  so good
+    - [Pippo](user):  so perfect
+- intent: mood_unhappy
+  examples: |
+    - [Pippo](user):  my day was horrible
+    - [Pippo](user):  I am sad
+    - [Pippo](user):  I don't feel very well
+    - [tommy](user):  I am disappointed
+    - [tommy](user):  super sad
+    - [tommy](user):  I'm so sad
+    - [tommy](user):  sad
+    - [tommy](user):  very sad
+    - [Pippo](user):  unhappy
+    - [Pippo](user):  not good
+    - [asia](user):  not very good
+    - [asia](user):  extremly sad
+    - [asia](user):  so saad
+    - [Pippo](user):  so sad
+
+- intent: affirm
+  examples: |    
+    - [asia](user): yes
+    - [asia](user): y
+    - [tommy](user): indeed
+    - [tommy](user): of course
+    - [tommy](user): that sounds good
+    - [asia](user): correct
+
+- intent: add_to_list
+  examples: |
+    - [Pippo](user): Good morning, I want to add something to my list
+    - [Pippo](user): Good evening, I want to add something to my list
+    - [asia](user): hello, I want to add something to my list
+    - [tommy](user): I want to add something to my list
+    - [tommy](user): I would like to add some products to my list
+    - [tommy](user): I want to add some products to my list
+    - [tommy](user): I want to add a product to my list
+    - [tommy](user): I would like to put a product in my list
+    - [tommy](user): I would like to put some products in my list
+    - [Pippo](user): hello i want to add something in my list
+    - [Pippo](user): hello Robshop! I would like to add some products in my list
+    - [asia](user): Yes, I would like to insert another product in my list
+    - [tommy](user): sure! I want to add a new product in my list
+    - [tommy](user): Yes, I want to add a new product in my list
+    - [tommy](user): add a new product
+    - [tommy](user): add another product
+    - [Pippo](user): Yes, I want to add a new product
+    - [Pippo](user): Yes, I would like to insert another product
+    - [asia](user): Yes, I want to add another product
+    - [asia](user): yes
+    - [asia](user): y
+    - [asia](user): indeed
+    - [Pippo](user): of course
+    - [Pippo](user): that sounds good
+    - [Pippo](user): correct
+    - [marina](user): add [pepper](product) to list
+- intent: view_the_list
+  examples: |
+    - [Pippo](user):  I would like to view my [shopping list](shopping_type).
+    - [tommy](user):  Could you show me my [shopping list](shopping_type)?
+    - [Pippo](user):  Yes, I want to view my [shopping list](shopping_type).
+    - [youssef](user): show list
+- intent: product
+  examples: |
+    - [wheat](product)
+    - [rye](product) 
+    - [oats](product)
+    - [corn](product)
+    - [barley](product)
+    - [buckwheat](product)
+    - [rice](product)
+    - [bread](product)
+    - [buns](product)
+    - [cakes](product)
+    - [cookies](product)
+    - [pies](product)
+    - [cereal](product)
+    - [corn flakes](product)
+    - [oat flakes](product)
+    - [rice flakes](product)
+    - [muesli](product)
+    - [popcorn](product)
+    - [pasta](product)
+    - [macaroni](product)
+    - [noodles](product)
+    - [spaghetti](product)
+    - [vermicelli](product)
+    - [ravioli](product)
+    - [bread](product)
+    - [white bread](product)
+    - [whole-wheat bread](product)
+    - [rye bread](product)
+    - [roll](product)
+    - [croissant](product)
+    - [hamburger bun](product)
+    - [hot dog bun ](product)
+    - [flour](product)
+    - [cake mix](product)
+    - [cake](product)
+    - [fruitcake](product)
+    - [chocolate cake](product)
+    - [chocolate chip cake](product)
+    - [chocolate layer cake](product)
+    - [chocolate frosting cake](product)
+    - [honey cake](product)
+    - [cheesecake](product)
+    - [lemon cake](product)
+    - [torte](product)
+    - [coffee cake](product)
+    - [cupcake](product)
+    - [brownie](product)
+    - [oatmeal cookie](product)
+    - [chocolate cookie](product)
+    - [pie](product)
+    - [apple pie](product)
+    - [blueberry pie](product)
+    - [cherry pie](product)
+    - [tart](product)
+    - [apple tart](product)
+    - [mince pie](product)
+    - [pumpkin pie](product)
+    - [pizza](product)
+    - [muffin](product)
+    - [blueberry muffin](product)
+    - [biscuit](product)
+    - [pancake ](product)
+    - [donut ](product)
+    - [waffle](product)
+    - [meat ](product)
+    - [beef](product)
+    - [pork](product)
+    - [veal](product)
+    - [beefsteak](product)
+    - [roast beef](product)
+    - [ground beef](product)
+    - [hamburger](product)
+    - [ham](product)
+    - [bacon](product)
+    - [salami](product)
+    - [hot dogs](product)
+    - [poultry](product)
+    - [chicken](product)
+    - [turkey](product)
+    - [goose](product)
+    - [duck](product)
+    - [fowl ](product)
+    - [eggs](product)
+    - [[chicken breast](product)
+    - [turkey breast](product)
+    - [fish](product)
+    - [salmon](product)
+    - [trout](product)
+    - [sturgeon](product)
+    - [cod](product)
+    - [sole ](product)
+    - [flatfish](product)
+    - [plaice](product)
+    - [halibut](product)
+    - [tuna](product)
+    - [perch](product)
+    - [bass](product)
+    - [pike](product)
+    - [sardine](product)
+    - [catfish](product)
+    - [roach](product)
+    - [caviar](product)
+    - [candy](product)
+    - [candies](product)
+    - [sweets](product)
+    - [caramels](product)
+    - [lollipop](product)
+    - [bonbons](product)
+    - [chocolate](product)
+    - [chocolate bar](product)
+    - [marshmallow](product)
+    - [milk](product)
+    - [whole milk](product)
+    - [skim milk](product)
+    - [yogurt](product)
+    - [cream](product)
+    - [cream cheese](product)
+    - [cheese](product)
+    - [Parmesan](product)
+    - [Cheddar](product)
+    - [Mozzarella](product)
+    - [hard cheese](product)
+    - [grated cheese](product)
+    - [ice cream](product)
+    - [vanilla ice cream](product)
+    - [chocolate ice cream](product)
+    - [fruit ice](product)
+    - [fresh fruit](product)
+    - [apple](product)
+    - [pear](product)
+    - [cherry](product)
+    - [kiwi](product)
+    - [banana](product)
+    - [lime](product)
+    - [lemon](product)
+    - [papaya](product)
+    - [mango](product)
+    - [avocado](product)
+    - [melon](product)
+    - [watermelon](product)
+    - [olive](product)
+    - [orange](product)
+    - [strawberry](product)
+    - [fresh vegetables](product)
+    - [salad vegetables](product)
+    - [potato](product)
+    - [sweet pepper](product)
+    - [red pepper](product)
+    - [paprika](product)
+    - [broccoli](product)
+    - [spinach](product)
+    - [lettuce](product)
+    - [asparagus](product)
+    - [chicory](product)
+    - [zucchini](product)
+    - [green peas](product)
+    - [coffee](product)
+    - [basil](product)
+    - [chocolate](product)
+    - [green tea](product)
+    - [tea](product)
+    - [cappuccino](product)
+    - [lemonade](product)
+    - [ginger ale](product)
+    - [mineral water](product)
+    - [spring water](product)
+    - [rum](product)
+    - [gin](product)
+    - [vodka](product)
+    - [cognac](product)
+    - [liqueur](product)
+    - [ketchup](product)
+    - [mushroom sauce](product)
+    - [barbecue sauce](product)
+    - [lard](product)
+    - [animal fat](product)
+    - [olive oil](product)
+    - [Italian dressing](product)
+    - [oregano](product)
+    - [marjoram](product)
+    - [rosemary](product)
+    - [coriander](product)
+    - [soy sauce](product)
+
+
+- intent: quantity
+  examples: |
+    - [Pippo](user):  I want [7](quantity) [apples](product)
+    - [Pippo](user):  I want [6](quantity) [apples](product)
+    - [Pippo](user):  [6](quantity) [apples](product)
+    - [Pippo](user):  [12](quantity) [apples](product)
+    - [Pippo](user):  [30](quantity) [apples](product)
+    - [Pippo](user):  [200](quantity)
+    - [Pippo](user):  [56](quantity)
+    - [Pippo](user):  [10](quantity)
+    - [Pippo](user):  [1](quantity)
+    - [Pippo](user):  [2](quantity)
+    - [Pippo](user):  [3](quantity)
+    - [Pippo](user):  [4](quantity)
+    - [Pippo](user):  [5](quantity)
+    - [Pippo](user):  [6](quantity)
+    - [Pippo](user):  [7](quantity)
+    - [Pippo](user):  [8](quantity)
+    - [Pippo](user):  [9](quantity)
+    - [alex](user): [4](quantity)
+- intent: remove_from_list
+  examples: |
+    - [Pippo](user):  hello, I want to remove something from my list
+    - [Pippo](user):  I want to remove something from my list
+    - [Pippo](user):  I would like to remove some products from my list
+    - [Pippo](user):  I want to remove some products from my list
+    - [Pippo](user):  I want to remove a product from my list
+    - [Pippo](user):  I would like to remove a product in my list
+    - [Pippo](user):  I would like to remove some products in my list
+    - [Pippo](user):  I want to remove some product.
+    - [Pippo](user):  I would like to remove some product.
+    - [Pippo](user):  I would like to remove a product.
+
+- synonym: list
+  examples: |
+    - shopping list
+    - cart
+
+- synonym: add
+  examples: |
+    - append
+    - include
+    - put
+    - insert
+    - enter
+- synonym: I am
+  examples: |
+    - i am
+    - i'm
+    
+- synonym: remove
+  examples: |
+    - cancel
+    - delete
+- regex: user
+  examples: |
+    - \.+?(?=:)
