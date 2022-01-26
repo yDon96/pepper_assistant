@@ -18,7 +18,7 @@ def get_dialogue_response_from(rest_response):
 
 def handle_service(req, server_url):
 
-    message = get_post_message(req.input_text )
+    message = get_post_message(req.input_text)
     rest_response = requests.post(server_url, json=message)
     dialogue_response = get_dialogue_response_from(rest_response)
 
