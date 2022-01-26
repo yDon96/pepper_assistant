@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BOT_DIR="/home/alex/Desktop/midTerm_project/midterm_RobShop"
+BOT_DIR="$1"
 
 cd $BOT_DIR
 

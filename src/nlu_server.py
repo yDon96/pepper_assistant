@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from rasa_ros.srv import Dialogue, DialogueResponse
-
+import subprocess
 import rospy
 import requests
 
@@ -36,6 +36,13 @@ def main():
 
 
 if __name__ == '__main__':
+
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
+        config = yaml.full_load(file)
+
+    nlu_folder_path = config['nlu']['path']
+    subprocess.Popen(['sh', './scripts/rasa_action.sh', nlu_folder_path]).wait()
     try: 
         main()
     except rospy.ROSInterruptException as e:

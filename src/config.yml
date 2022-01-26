@@ -19,3 +19,6 @@ settings:
 
 models:
     defaults: 'models/deep_speaker.h5'
+
+nlu:
+    path: 'nlu/'
