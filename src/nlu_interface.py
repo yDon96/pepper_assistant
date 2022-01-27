@@ -34,8 +34,8 @@ class VoiceTerminalInterface:
 
     def get_input(self):
         result = rospy.wait_for_message(self.topic, String)
-        print(f"[IN]:{result}") 
-        return result
+        print(f"[IN]:{result.data}") 
+        return result.data
 
     def print_output(self,text):
         print("[OUT]:",text)
