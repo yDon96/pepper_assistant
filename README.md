@@ -1,10 +1,10 @@
 # Pepper Assistant
 
 ## Table of Contents
-1. [Project Structure](##project-structure)
-2. [Launch Files](##launch-files)
-3. [Scripts Files](##scripts-files)
-4. [NLU](##nlu)
+1. [Project Structure](#project-structure)
+2. [Launch Files](#launch-files)
+3. [Scripts Files](#scripts-files)
+4. [NLU](#nlu)
 
 
 ### Project Structure
