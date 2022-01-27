@@ -6,9 +6,25 @@ import yaml
 import os
 
 def get_post_message(text):
+    """
+    Generate json of the post request.
+
+    Parameters
+    ----------
+    text 
+        String to send as message
+    """
     return { "sender": 'bot', "message": text }
 
 def get_dialogue_response_from(rest_response):
+    """
+    Generate the response of the service.
+
+    Parameters
+    ----------
+    rest_response 
+        Response of rest call
+    """
     result = DialogueResponse()
     result.answer = ""
     for i in rest_response.json():
@@ -16,21 +32,41 @@ def get_dialogue_response_from(rest_response):
 
     return result
 
-def handle_service(req, server_url):
+def handle_service(dialogue_request, server_url):
+    """
+    Handle the request send to the service.
 
-    message = get_post_message(req.input_text)
+    Parameters
+    ----------
+    dialogue_request 
+        Request send to the service
+    server_url
+        Url of nlu server
+    """
+    message = get_post_message(dialogue_request.input_text)
     rest_response = requests.post(server_url, json=message)
     dialogue_response = get_dialogue_response_from(rest_response)
 
     return dialogue_response
 
 def main():
+    """
+    Main function of the service.
+    """
     rospy.logdebug('Dialogue server READY.')
     rospy.spin()
 
-def init_node(config):
-    service_name = config['nodes']['nluServer']
-    server_url = config['nlu']['serverUrl']
+def init_node(service_name, server_url):
+    """
+    Init the node.
+
+    Parameters
+    ----------
+    service_name 
+        Name assigned to the node
+    server_url
+        Url of nlu server
+    """
     rospy.init_node(service_name)
     service = rospy.Service(service_name, 
                             Dialogue, 
@@ -42,7 +78,10 @@ if __name__ == '__main__':
     with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
 
-    init_node(config)
+    service_name = config['nodes']['nluServer']
+    server_url = config['nlu']['serverUrl']
+
+    init_node(service_name, server_url)
 
     try: 
         main()

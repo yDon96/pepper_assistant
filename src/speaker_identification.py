@@ -19,6 +19,22 @@ def get_model(path):
     return get_deep_speaker(os.path.join(REF_PATH, path))
 
 def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold):
+    """
+    Callback called each time there is a new record.
+
+    Parameters
+    ----------
+    audio 
+        Audio source
+    sample_rate
+        The number of samples of audio recorded every second.
+    num_fbanks
+        Number of filter banks to apply
+    speaker_model
+        Deep model for speaker recognition
+    identification_threshold
+        The min value to assign a correct prediction
+    """
     audio_data = np.array(audio.data)
 
     # to float32
@@ -48,16 +64,36 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     else:
         print("Ha parlato:", id_label)
 
-def init_node(config):
-    rospy.init_node(config['nodes']['reidentification'], anonymous=True)
+def init_node(node_name):
+    """
+    Init the node.
 
-def listener(config):
-    sample_rate = config['settings']['sampleRate']
-    num_fbanks = config['settings']['numFbanks']
-    model_path = config['models']['defaults']
-    identification_threshold = config['settings']['identificationThreshold']
+    Parameters
+    ----------
+    node_name 
+        Name assigned to the node
+    """
+    rospy.init_node(node_name, anonymous=True)
+
+def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
+    """
+    Main function of the node.
+
+    Parameters
+    ----------
+    sample_rate
+        The number of samples of audio recorded every second.
+    num_fbanks
+        Number of filter banks to apply
+    model_path
+        Path to deep model
+    identification_threshold
+        The min value to assign a correct prediction
+    data_topic
+        Topic in which is published audio data
+    """
     speaker_model = get_model(model_path)
-    rospy.Subscriber(config['topics']['voiceData'], Int16MultiArray, lambda audio : callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold))
+    rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold))
     rospy.spin()
         
 if __name__ == '__main__':
@@ -65,5 +101,16 @@ if __name__ == '__main__':
     with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
     
-    init_node(config)
-    listener(config)
+    node_name = config['nodes']['reidentification']
+    sample_rate = config['settings']['sampleRate']
+    num_fbanks = config['settings']['numFbanks']
+    model_path = config['models']['defaults']
+    identification_threshold = config['settings']['identificationThreshold']
+    data_topic = config['topics']['voiceData']
+
+    init_node(node_name)
+    listener(sample_rate, 
+                num_fbanks, 
+                model_path, 
+                identification_threshold, 
+                data_topic)
