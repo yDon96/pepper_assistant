@@ -3,23 +3,37 @@ import yaml
 import os
 import rospy
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
+from utils.interface import TerminalInterface, VoiceTerminalInterface
 
-class TerminalInterface:
-    '''Class implementing a terminal i/o interface. 
+def get_interface(config, interface_type):
+    """
+    Generate the input/output interface to be used.
 
-    Methods
-    - get_input(self): return a string read from the terminal
-    - print_output(self, text): prints the text on the terminal
-
-    '''
-
-    def get_input(self):
-        return input("[IN]:  ") 
-
-    def print_output(self,text):
-        print("[OUT]:",text)
+    Parameters
+    ----------
+    config 
+        Configuration dictionary
+    interface_type
+        Name of the interface to inject
+    """
+    result = None
+    if interface_type == config['interfaceType']['terminal']:
+        result = TerminalInterface()
+    elif interface_type == config['interfaceType']['voiceTerminal']:
+        result = VoiceTerminalInterface(rospy, config['topics']['voiceText'])
+    return result
 
 def main(service, interface):
+    """
+    Main function of the node.
+
+    Parameters
+    ----------
+    service 
+        Service to call
+    interface
+        Interface that handle input/output
+    """
     while not rospy.is_shutdown():
         message = interface.get_input()
         if message == 'exit': 
@@ -30,9 +44,17 @@ def main(service, interface):
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 
-def init_node(config):
-    node_name = config['nodes']['nluInterface']
-    service_name = config['nodes']['nluServer']
+def init_node(node_name, service_name):
+    """
+    Init the node.
+
+    Parameters
+    ----------
+    node_name 
+        Name assigned to the node
+    service_name
+        Name of the service to call
+    """
     rospy.init_node(node_name)
     rospy.wait_for_service(service_name)
     dialogue_service = rospy.ServiceProxy(service_name, Dialogue)
@@ -44,10 +66,13 @@ if __name__ == '__main__':
     with open(os.path.join(REF_PATH,'config.yml')) as file:
         config = yaml.full_load(file)
 
-    dialogue_service = init_node(config)
-    terminal = TerminalInterface()
+    interface_type = rospy.get_param('interface_type')
+    node_name = config['nodes']['nluInterface']
+    service_name = config['nodes']['nluServer']
+    dialogue_service = init_node(node_name, service_name)
+    interface = get_interface(config, interface_type)
 
     try: 
-        main(dialogue_service, terminal)
+        main(dialogue_service, interface)
     except rospy.ROSInterruptException:
         pass
