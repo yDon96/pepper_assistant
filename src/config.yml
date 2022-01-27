@@ -12,7 +12,7 @@ nodes:
     nluInterface: 'nlu_interface'
 
 settings:
-    language: 'it-IT'
+    language: 'en-US'
     sampleRate: 16000
     chunkSize: 1024
     calibrationTime: 3
