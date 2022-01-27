@@ -24,3 +24,7 @@ models:
 
 nlu:
     serverUrl: 'http://localhost:5002/webhooks/rest/webhook'
+
+interfaceType:
+    terminal: 'terminal'
+    voiceTerminal: 'voice_terminal'
