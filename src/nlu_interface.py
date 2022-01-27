@@ -6,6 +6,16 @@ from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 from utils.interface import TerminalInterface, VoiceTerminalInterface
 
 def get_interface(config, interface_type):
+    """
+    Generate the input/output interface to be used.
+
+    Parameters
+    ----------
+    config 
+        Configuration dictionary
+    interface_type
+        Name of the interface to inject
+    """
     result = None
     if interface_type == config['interfaceType']['terminal']:
         result = TerminalInterface()
@@ -14,6 +24,16 @@ def get_interface(config, interface_type):
     return result
 
 def main(service, interface):
+    """
+    Main function of the node.
+
+    Parameters
+    ----------
+    service 
+        Service to call
+    interface
+        Interface that handle input/output
+    """
     while not rospy.is_shutdown():
         message = interface.get_input()
         if message == 'exit': 
@@ -25,6 +45,16 @@ def main(service, interface):
             print("Service call failed: %s"%e)
 
 def init_node(node_name, service_name):
+    """
+    Init the node.
+
+    Parameters
+    ----------
+    node_name 
+        Name assigned to the node
+    service_name
+        Name of the service to call
+    """
     rospy.init_node(node_name)
     rospy.wait_for_service(service_name)
     dialogue_service = rospy.ServiceProxy(service_name, Dialogue)
