@@ -10,6 +10,7 @@ nodes:
     reidentification: 'reidentification_node'
     nluServer: 'nlu_service'
     nluInterface: 'nlu_interface'
+    pyTts: 'py_tts'
 
 settings:
     language: 'en-US'
@@ -28,3 +29,6 @@ nlu:
 interfaceType:
     terminal: 'terminal'
     voiceTerminal: 'voice_terminal'
+
+tts:
+    speechRate: 50
