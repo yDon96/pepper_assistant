@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import os
 import yaml
+import h5py
 
 from utils.audio import get_mfcc
 from utils.model import get_deep_speaker
@@ -13,6 +14,20 @@ from utils.utils import batch_cosine_similarity, dist2id
 n_embs = 0
 X = []
 y = []
+
+def save_dataset():
+    predictions = np.array(X)
+    labels = np.array(y)
+
+    with h5py.File("experimentReadings.hdf5", "w") as h5f :
+        h5f.create_dataset("predictions", data=predictions)
+        h5f.create_dataset("labels", data=labels)
+
+def load_dataset(predictions, labels):
+    with h5py.File('experimentReadings.hdf5', 'r') as f:
+        predictions = f['predictions'][:].tolist()
+        labels = f['labels'][:].tolist()
+    
 
 def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -74,6 +89,8 @@ def init_node(node_name):
         Name assigned to the node
     """
     rospy.init_node(node_name, anonymous=True)
+    rospy.on_shutdown(save_dataset)
+    #load_dataset()
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
