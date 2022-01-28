@@ -93,8 +93,7 @@ def init_node(node_name, publish_topic):
     """
     rospy.init_node(node_name, anonymous=True)
     publisher = rospy.Publisher(publish_topic, Int16MultiArray, queue_size=10)
-    return publisher
-    
+    return publisher    
 
 if __name__ == '__main__':
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
