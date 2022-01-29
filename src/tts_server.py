@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from naoqi import ALProxy
 from optparse import OptionParser
 from pepper_nodes.srv import *
