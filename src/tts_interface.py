@@ -6,6 +6,16 @@ from ros_pepper_pkg.srv import *
 from std_msgs.msg import String
 
 def callback(message, tts_service):
+    """
+    Topic callback.
+
+    Parameters
+    ----------
+    message 
+        Message for the service
+    tts_service
+        Service to call
+    """
     try:
         bot_answer = tts_service(message.data)
     except rospy.ServiceException as e:
