@@ -14,9 +14,9 @@ def callback(message, tts_service):
 
 def main():
     """
-    Main function of the service.
+    Main function of the interface.
     """
-    rospy.logdebug('Tts server READY.')
+    rospy.logdebug('Tts interface READY.')
     rospy.spin()
 
 def init_node(node_name, service_name, topic):
