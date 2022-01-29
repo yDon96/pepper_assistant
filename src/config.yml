@@ -2,6 +2,7 @@ topics:
     microphone: 'mic_data'
     voiceData: 'voice_data'
     voiceText: 'voice_txt'
+    outputText: 'output_text'
 
 
 nodes:
@@ -11,6 +12,7 @@ nodes:
     nluServer: 'nlu_service'
     nluInterface: 'nlu_interface'
     pyTts: 'py_tts'
+    ttsInterface: 'tts_interface'
 
 settings:
     language: 'en-US'
