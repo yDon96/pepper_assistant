@@ -12,6 +12,7 @@ nodes:
     nluServer: 'nlu_service'
     nluInterface: 'nlu_interface'
     pyTts: 'py_tts'
+    pepperTts: 'pepper_tts'
     ttsInterface: 'tts_interface'
 
 settings:

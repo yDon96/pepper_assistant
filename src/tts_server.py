@@ -20,9 +20,9 @@ class Text2SpeechNode:
             self.tts.say(msg.speech)
         return "ACK"
     
-    def start(self):
-        rospy.init_node("text2speech_node")
-        rospy.Service('tts', Tts, self.say)
+    def start(self,service_name):
+        rospy.init_node(service_name)
+        rospy.Service(service_name, Tts, self.say)
 
         rospy.spin()
 
@@ -32,8 +32,14 @@ if __name__ == "__main__":
     parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
 
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(REF_PATH,'config.yml')) as file:
+        config = yaml.full_load(file)
+
+    service_name = config['nodes']['pepperTts']
+
     try:
         ttsnode = Text2SpeechNode(options.ip, int(options.port))
-        ttsnode.start()
+        ttsnode.start(service_name)
     except rospy.ROSInterruptException:
         pass
