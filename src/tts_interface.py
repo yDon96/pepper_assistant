@@ -6,7 +6,7 @@ from std_msgs.msg import String
 
 def callback(message, tts_service):
     try:
-        bot_answer = tts_service(message)
+        bot_answer = tts_service(message.data)
     except rospy.ServiceException as e:
         print("Service call failed: %s"%e)
 

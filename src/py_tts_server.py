@@ -5,7 +5,7 @@ import os
 from ros_pepper_pkg.srv import *
 import rospy
 
-def say(self, msg):
+def say(engine,msg):
     engine.say(msg)
     engine.runAndWait()
     return "ACK"
@@ -27,8 +27,8 @@ def init_node(service_name):
         Name assigned to the noder
     """
     rospy.init_node(service_name)
-    rospy.Service(service_name, Tts, self.say)
     tts_engine = pyttsx3.init()
+    rospy.Service(service_name, Tts, lambda message : say(tts_engine,message))
 
     return tts_engine
 
