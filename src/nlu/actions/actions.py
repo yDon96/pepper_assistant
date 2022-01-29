@@ -12,6 +12,7 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import AllSlotsReset, SlotSet
 from rasa_sdk.forms import FormValidationAction 
+#ciao
 
 
 def print_inventory(dict):
