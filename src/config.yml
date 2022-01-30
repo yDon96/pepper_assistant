@@ -32,6 +32,7 @@ nlu:
 interfaceType:
     terminal: 'terminal'
     voiceTerminal: 'voice_terminal'
+    voice: 'voice'
 
 tts:
     speechRate: 50

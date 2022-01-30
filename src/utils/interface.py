@@ -35,3 +35,25 @@ class VoiceTerminalInterface:
 
     def print_output(self,text):
         print("[OUT]:",text)
+
+class VoiceInterface:
+    '''Class implementing a voice input/terminal output interface. 
+
+    Methods
+    - get_input(self): return a string read from the voice data topic
+    - print_output(self, text): prints the text on the terminal and publish text 
+
+    '''
+    def __init__(self, rospy, publisher, input_topic):
+        self.rospy = rospy
+        self.input_topic = input_topic
+        self.publisher = publisher
+
+    def get_input(self):
+        result = rospy.wait_for_message(self.input_topic, String)
+        print(f"[IN]:{result.data}") 
+        return result.data
+
+    def print_output(self,text):
+        self.publisher.publish(text)
+        print("[OUT]:",text)

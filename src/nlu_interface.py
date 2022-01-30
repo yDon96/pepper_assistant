@@ -3,7 +3,9 @@ import yaml
 import os
 import rospy
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
-from utils.interface import TerminalInterface, VoiceTerminalInterface
+from utils.interface import *
+from std_msgs.msg import String
+
 
 def get_interface(config, interface_type):
     """
@@ -21,6 +23,10 @@ def get_interface(config, interface_type):
         result = TerminalInterface()
     elif interface_type == config['interfaceType']['voiceTerminal']:
         result = VoiceTerminalInterface(rospy, config['topics']['voiceText'])
+    elif interface_type == config['interfaceType']['voice']:
+        publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
+        result = VoiceInterface(rospy, publisher, config['topics']['voiceText'])
+
     return result
 
 def main(service, interface):
