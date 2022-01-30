@@ -35,4 +35,4 @@ interfaceType:
     voice: 'voice'
 
 tts:
-    speechRate: 50
+    speechRate: 100
