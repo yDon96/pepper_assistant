@@ -19,7 +19,9 @@ import pandas as pd
 
 #ciao
 from configparser import ConfigParser
-from database_local.config import config
+from database_local.config import configDB
+
+
 
 
 def print_inventory(dict):
@@ -31,7 +33,7 @@ shopping_list ={}
 def viewList(dispatcher, tracker, domain):
         
         try:
-            params = config()
+            params = configDB()
 # Connect to the PostgreSQL database
             #conn = psycopg2.connect(host="localhost", port = 5432, database="postgres", user="postgres", password="Armstrong981")
             conn = psycopg2.connect(**params)
@@ -50,18 +52,17 @@ def viewList(dispatcher, tracker, domain):
                 # dispatcher.utter_message(text=msg)
 
                      #questo lo printa sul terminale "Rasa run actions"
-                    msg = f"Your shopping list is:\n"
+                    msg = f"In your shopping list are:\n"
                     dispatcher.utter_message(text=msg)
-                    msg2= f"_______________________________________________"
-                    dispatcher.utter_message(text=msg2)
                     sql_Query = "select prodotto, quantità from shoppingList where nome =%s"
                     nome = (str(current_user), )
                     cur = conn.cursor()
                     cur.execute(sql_Query, nome)
-                    record = cur.fetchall()
-                    print(record)
-                    msg1= f"_______________________________________________"
-                    dispatcher.utter_message(text=msg1)
+                    records = cur.fetchall()
+                    for record in records:
+                        print(f"{record[1]} {record[0]}")
+                        msg3 = f"{record[1]} {record[0]}"
+                        dispatcher.utter_message(text=msg3)
 
                  
         except (Exception, psycopg2.Error) as error:
