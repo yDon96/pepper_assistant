@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from naoqi import ALProxy
 from optparse import OptionParser
-from pepper_nodes.srv import *
+from ros_pepper_pkg.srv import *
 import rospy
+import os
 
 class Text2SpeechNode:
 
@@ -28,18 +29,12 @@ class Text2SpeechNode:
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--ip", dest="ip", default="10.0.1.207")
+    parser.add_option("--ip", dest="ip", default="10.0.1.230")
     parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
 
-    REF_PATH = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(REF_PATH,'config.yml')) as file:
-        config = yaml.full_load(file)
-
-    service_name = config['nodes']['pepperTts']
-
     try:
         ttsnode = Text2SpeechNode(options.ip, int(options.port))
-        ttsnode.start(service_name)
+        ttsnode.start("pepper_tts")
     except rospy.ROSInterruptException:
         pass
