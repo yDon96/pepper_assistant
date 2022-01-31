@@ -12,9 +12,18 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import AllSlotsReset, SlotSet
 from rasa_sdk.forms import FormValidationAction 
-from database_local.config import config
+
+
 import psycopg2
+import pandas as pd
+
+# Import the 'config' funtion from the config.py file
+
 #ciao
+from configparser import ConfigParser
+from database_local.config import configDB
+
+
 
 
 def print_inventory(dict):
@@ -24,32 +33,47 @@ def print_inventory(dict):
 shopping_list ={}
 
 def viewList(dispatcher, tracker, domain):
-        current_shoppinglist = next(tracker.get_latest_entity_values("shopping_type"), None)
-        global shopping_list
-         #Restituisce NONE se non trova l'entità.
-        if not current_shoppinglist:
-            msg = f"Ops, I not found the entity shopping list!"
-            dispatcher.utter_message(text=msg)
-            return []
-        if current_shoppinglist :
-            # msg = f"Ok, I found an entity shopping list!"
-            # dispatcher.utter_message(text=msg)
-            if(len(shopping_list)!=0):
-                print_inventory(shopping_list) #questo lo printa sul terminale "Rasa run actions"
-                msg = f"Your shopping list is:\n"
+        
+        try:
+            params = configDB()
+# Connect to the PostgreSQL database
+            #conn = psycopg2.connect(host="localhost", port = 5432, database="postgres", user="postgres", password="Armstrong981")
+            conn = psycopg2.connect(**params)
+            # Create a new cursor
+            cur = conn.cursor()
+
+            current_shoppinglist = next(tracker.get_latest_entity_values("shopping_type"), None)
+            current_user = next(tracker.get_latest_entity_values("user"), None)
+            #Restituisce NONE se non trova l'entità.
+            if not current_shoppinglist:
+                msg = f"Ops, I not found the entity shopping list!"
                 dispatcher.utter_message(text=msg)
-                msg2= f"_______________________________________________"
-                dispatcher.utter_message(text=msg2)
-                for key,value in shopping_list.items():
-                    dispatcher.utter_message(text=f"{key}\t{value}")
-                msg1= f"_______________________________________________"
-                dispatcher.utter_message(text=msg1)
-		        
-            if (len(shopping_list)==0):
-                msg = f"Are you sure you have already added an item in the list!!?\n"
-                dispatcher.utter_message(text=msg)
-                msg1= f"I think no. Please restart the conversation with command: /restart or do another action.\n"
-                dispatcher.utter_message(text=msg1)
+                return []
+            if current_shoppinglist :
+                # msg = f"Ok, I found an entity shopping list!"
+                # dispatcher.utter_message(text=msg)
+
+                     #questo lo printa sul terminale "Rasa run actions"
+                    msg = f"In your shopping list are:\n"
+                    dispatcher.utter_message(text=msg)
+                    sql_Query = "select prodotto, quantità from shoppingList where nome =%s"
+                    nome = (str(current_user), )
+                    cur = conn.cursor()
+                    cur.execute(sql_Query, nome)
+                    records = cur.fetchall()
+                    for record in records:
+                        print(f"{record[1]} {record[0]}")
+                        msg3 = f"{record[1]} {record[0]}"
+                        dispatcher.utter_message(text=msg3)
+
+                 
+        except (Exception, psycopg2.Error) as error:
+            print("Error while fetching data from PostgreSQL", error)
+        finally:
+            if conn:
+                cur.close()
+                conn.close()    
+                print("PostgreSQL connection is closed")
          
     
 def removeElem(dispatcher,tracker,domain):
