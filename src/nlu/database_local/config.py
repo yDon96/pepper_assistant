@@ -5,12 +5,15 @@
 
 #!/usr/bin/python
 from configparser import ConfigParser
+import os
  
-def config(filename='src/nlu/actions/database_local/database.ini', section='postgresql'):
+def configDB(filename='database.ini', section='postgresql'):
     # create a parser
+    REF_PATH = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(REF_PATH,filename)
     parser = ConfigParser()
     # read config file
-    parser.read(filename)
+    parser.read(path)
  
     # get section, default to postgresql
     db = {}
@@ -23,6 +26,6 @@ def config(filename='src/nlu/actions/database_local/database.ini', section='post
          
     # Returns an error if a parameter is called that is not listed in the initialization file
     else:
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
+        raise Exception('Section {0} not found in the {1} file'.format(section, path))
  
     return db
