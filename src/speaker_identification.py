@@ -26,14 +26,17 @@ def save_dataset():
         h5f.create_dataset("predictions", data=predictions)
         h5f.create_dataset("labels", data=labels)
 
-def load_dataset(predictions, labels):
+def load_dataset():
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(REF_PATH, 'data/dataset.hdf5')
 
+    predictions = []
+    labels = []
     if os.path.isfile(path):        
         with h5py.File(path, 'r') as f:
             predictions = f['predictions'][:].tolist()
-            labels = f['labels'][:].tolist()        
+            labels = f['labels'][:].tolist() 
+    return predictions, labels       
 
 def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -96,7 +99,9 @@ def init_node(node_name):
     """
     rospy.init_node(node_name, anonymous=True)
     rospy.on_shutdown(save_dataset)
-    load_dataset(X, y)
+    predictions, labels = load_dataset()
+    X.extend(predictions)
+    y.extend(labels)
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
