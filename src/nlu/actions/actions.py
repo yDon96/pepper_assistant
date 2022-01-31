@@ -12,6 +12,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import AllSlotsReset, SlotSet
 from rasa_sdk.forms import FormValidationAction 
+from database_local.config import config
+import psycopg2
 #ciao
 
 
@@ -51,8 +53,9 @@ def viewList(dispatcher, tracker, domain):
          
     
 def removeElem(dispatcher,tracker,domain):
+
     
-    
+    ''''  
     global shopping_list
     product_to_remove = next(tracker.get_latest_entity_values("product"),None)
     
@@ -70,7 +73,26 @@ def removeElem(dispatcher,tracker,domain):
             msg3 = f"The product is not present, attention!"
             dispatcher.utter_message(text=msg3)
             msg4 = f"Do you want to do something else?"
-            dispatcher.utter_message(text=msg4)
+            dispatcher.utter_message(text=msg4)'''
+
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        name = str(next(tracker.get_latest_entity_values("user"),None))
+        product = str(next(tracker.get_latest_entity_values("product"),None))
+        cur.execute("""delete from shopping_list where (nome = %s and prodotto = %s)""",(name,product))
+        #query_results = cur.fetchall()
+        print(name+" "+product)
+        conn.commit()
+        msg3 = f"The product has been removed!"
+        dispatcher.utter_message(text=msg3)
+    except(Exception,psycopg2.Error) as err:
+        print("Operation failed with error:",err)
+
+    finally:
+        cur.close()
+        conn.close()
 
 def updateList(dispatcher, tracker,domain):
     global shopping_list
