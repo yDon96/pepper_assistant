@@ -7,12 +7,35 @@
 
 # This is a simple example for a custom action which utters "Hello World!"
 
+from operator import contains
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import AllSlotsReset, SlotSet
-from rasa_sdk.forms import FormValidationAction 
-#ciao
+from rasa_sdk.forms import FormValidationAction
+#ciao 
+import psycopg2
+
+def addproductDB(dispatcher, user, product,quantity):
+   
+        connection = psycopg2.connect(host="localhost", port = 5432, database="CR", user="cr", password="postgress")
+        cursor = connection.cursor()
+
+        postgres_insert_query = """ INSERT INTO  shopping_list (nome, prodotto, quantità) VALUES (%s,%s,%s)"""
+        record_to_insert = (user, product, quantity)
+        cursor.execute(postgres_insert_query, record_to_insert)
+
+        connection.commit()
+        count = cursor.rowcount
+        print(count, "Record inserted successfully into shopping list table")
+
+        # closing database connection.
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 
 
 def print_inventory(dict):
@@ -51,7 +74,6 @@ def viewList(dispatcher, tracker, domain):
          
     
 def removeElem(dispatcher,tracker,domain):
-    
     
     global shopping_list
     product_to_remove = next(tracker.get_latest_entity_values("product"),None)
@@ -117,14 +139,22 @@ class ActionSubmit(Action):
         
         product = tracker.get_slot("product")
         quantity = tracker.get_slot("quantity")
-        if(product in shopping_list):
-            dispatcher.utter_message(f"The product is already in your list. Select option 'update' to update the product's quantity or 'remove' to remove it.")
-            return [AllSlotsReset()]
+        user = next(tracker.get_latest_entity_values("user"), None)
+
+        print("\nUser:", user)
         print("\nProduct:",product)
-        print("Quantity:",quantity)
-        dispatcher.utter_message(f"Thanks, your answers have been recorded!")
-        shopping_list[product]=quantity
-        return [AllSlotsReset()]
+        print("\nQuantity:",quantity)
+
+        try: 
+            addproductDB(dispatcher, str(user), str(product), str(quantity))
+            dispatcher.utter_message(f"Thanks, your answers have been recorded!")
+        except (Exception, psycopg2.Error) as error:        
+            print("Failed to insert record into mobile table", error)
+            # if the element is alredy present
+            if str(error.pgcode) == "23505":            
+                dispatcher.utter_message(f"The product is already in your list. Select option 'update' to update the product's quantity or 'remove' to remove it.")  
+        finally:        
+            return [AllSlotsReset()]
 
         
 class ActionView(Action):
