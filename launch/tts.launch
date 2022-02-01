@@ -1,0 +1,5 @@
+<launch>
+        <param name="service_tag" type="str" value="pyTts"/>
+        <node pkg="ros_pepper_pkg" type="tts_interface.py" name="tts_interface" output="screen" />
+        <node pkg="ros_pepper_pkg" type="py_tts_server.py" name="py_tts" output="screen" />
+</launch>
