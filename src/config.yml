@@ -3,6 +3,7 @@ topics:
     voiceData: 'voice_data'
     voiceText: 'voice_txt'
     outputText: 'output_text'
+    micStatus:  'mic_status'
 
 
 nodes:
@@ -14,6 +15,7 @@ nodes:
     pyTts: 'py_tts'
     pepperTts: 'pepper_tts'
     ttsInterface: 'tts_interface'
+    
 
 settings:
     language: 'en-US'
@@ -35,4 +37,4 @@ interfaceType:
     voice: 'voice'
 
 tts:
-    speechRate: 100
+    speechRate: 150
