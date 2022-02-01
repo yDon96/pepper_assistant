@@ -2,6 +2,7 @@ topics:
     microphone: 'mic_data'
     voiceData: 'voice_data'
     voiceText: 'voice_txt'
+    outputText: 'output_text'
 
 
 nodes:
@@ -10,6 +11,9 @@ nodes:
     reidentification: 'reidentification_node'
     nluServer: 'nlu_service'
     nluInterface: 'nlu_interface'
+    pyTts: 'py_tts'
+    pepperTts: 'pepper_tts'
+    ttsInterface: 'tts_interface'
 
 settings:
     language: 'en-US'
@@ -28,3 +32,7 @@ nlu:
 interfaceType:
     terminal: 'terminal'
     voiceTerminal: 'voice_terminal'
+    voice: 'voice'
+
+tts:
+    speechRate: 100
