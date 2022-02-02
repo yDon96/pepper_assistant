@@ -6,6 +6,13 @@ import yaml
 import time
 import speech_recognition as sr
 import os
+from std_msgs.msg import Bool
+
+
+execution_status = True
+def set_execution_status(status):
+    rospy.sleep(2.)    
+    execution_status = status.data
 
 def callback(recognizer, audio, pub):
     """
@@ -24,7 +31,8 @@ def callback(recognizer, audio, pub):
     data_to_send = Int16MultiArray()
     data_to_send.data = data
     
-    pub.publish(data_to_send)
+    if execution_status:
+        pub.publish(data_to_send)
 
 def calibrate_noise(microphone, recognizer, calibration_time):
     """
@@ -80,7 +88,7 @@ def record(calibration_time, sample_rate, chunk_size, publisher):
 
     rospy.spin()
 
-def init_node(node_name, publish_topic):
+def init_node(node_name, publish_topic, mic_status_topic):
     """
     Init the node.
 
@@ -92,6 +100,7 @@ def init_node(node_name, publish_topic):
         Name of the publisher topic
     """
     rospy.init_node(node_name, anonymous=True)
+    rospy.Subscriber(mic_status_topic, Bool, set_execution_status)
     publisher = rospy.Publisher(publish_topic, Int16MultiArray, queue_size=10)
     return publisher
     
@@ -106,6 +115,7 @@ if __name__ == '__main__':
     chunk_size = config['settings']['chunkSize']
     node_name = config['nodes']['voiceRecorder']
     publish_topic = config['topics']['microphone']
+    mic_status_topic = config['topics']['micStatus']
 
-    publisher = init_node(node_name, publish_topic)
+    publisher = init_node(node_name, publish_topic, mic_status_topic)
     record(calibration_time, sample_rate, chunk_size, publisher)
