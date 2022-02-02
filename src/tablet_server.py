@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     print(http)
     try:
-        ttsnode = TabletNode(options.ip, int(options.port))
+        ttsnode = TabletNode(options.ip, int(options.port),http)
         ttsnode.start("pepper_tablet")
         ttsnode.showText()
     except rospy.ROSInterruptException:
