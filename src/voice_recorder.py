@@ -9,10 +9,20 @@ import os
 from std_msgs.msg import Bool
 
 
-execution_status = True
-def set_execution_status(status):
-    rospy.sleep(2.)    
-    execution_status = status.data
+stop_listening = None
+
+def callback_microphone(set_on, recognizer, microphone, publisher):
+    if set_on:
+        print("Setting ON Mic")
+        print("Recording...")
+        stop = recognizer.listen_in_background(microphone, 
+                                                        lambda recognizer, audio : callback(recognizer, 
+                                                                                                audio,
+                                                                                                publisher))
+        stop_listening = stop
+    else:
+        print("Setting OFF mic")
+        stop_listening(wait_for_stop=False)
 
 def callback(recognizer, audio, pub):
     """
@@ -31,8 +41,7 @@ def callback(recognizer, audio, pub):
     data_to_send = Int16MultiArray()
     data_to_send.data = data
     
-    if execution_status:
-        pub.publish(data_to_send)
+    pub.publish(data_to_send)
 
 def calibrate_noise(microphone, recognizer, calibration_time):
     """
@@ -54,7 +63,7 @@ def calibrate_noise(microphone, recognizer, calibration_time):
     print("Calibration finished")
 
 
-def record(calibration_time, sample_rate, chunk_size, publisher):
+def record(calibration_time, sample_rate, chunk_size, publisher, mic_status_topic):
     """
     Start new recording session.
 
@@ -81,14 +90,18 @@ def record(calibration_time, sample_rate, chunk_size, publisher):
     # start listening in the background
     # `stop_listening` is now a function that, when called, stops background listening
     print("Recording...")
-    stop_listening = recognizer.listen_in_background(microphone, 
+    stop = recognizer.listen_in_background(microphone, 
                                                         lambda recognizer, audio : callback(recognizer, 
-                                                                                                audio, 
-                                                                                                publisher))
-
+                                                                                                audio,
+                                                                                                publisher)) 
+    rospy.Subscriber(mic_status_topic, Bool, lambda status : callback_microphone(status.data, 
+                                                                                    recognizer,
+                                                                                    microphone, 
+                                                                                    publisher))
+    stop_listening = stop
     rospy.spin()
 
-def init_node(node_name, publish_topic, mic_status_topic):
+def init_node(node_name, publish_topic):
     """
     Init the node.
 
@@ -100,7 +113,6 @@ def init_node(node_name, publish_topic, mic_status_topic):
         Name of the publisher topic
     """
     rospy.init_node(node_name, anonymous=True)
-    rospy.Subscriber(mic_status_topic, Bool, set_execution_status)
     publisher = rospy.Publisher(publish_topic, Int16MultiArray, queue_size=10)
     return publisher
     
@@ -117,5 +129,5 @@ if __name__ == '__main__':
     publish_topic = config['topics']['microphone']
     mic_status_topic = config['topics']['micStatus']
 
-    publisher = init_node(node_name, publish_topic, mic_status_topic)
-    record(calibration_time, sample_rate, chunk_size, publisher)
+    publisher = init_node(node_name, publish_topic)
+    record(calibration_time, sample_rate, chunk_size, publisher, mic_status_topic)
