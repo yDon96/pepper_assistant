@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+        <arg name="port" value="9090"/>
+    </include>
+    <node pkg="ros_pepper_pkg" name="html_server" type="html_server.sh" output="screen" args="src/html/" />
+    <node pkg="ros_pepper_pkg" type="tablet_server.py" name="tablet_server" output="screen"/>
+</launch>
