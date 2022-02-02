@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import rospy
-from std_msgs.msg import Int16MultiArray, String
+from std_msgs.msg import Int16MultiArray, String, Bool
 import numpy as np
 import yaml
 from speech_recognition import AudioData
@@ -9,7 +9,7 @@ from speech_recognition import UnknownValueError, RequestError
 import os
     
 
-def callback(audio, recognizer, data_publisher, text_publisher, sample_rate, language):
+def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publisher, sample_rate, language):
     """
     Callback called each time there is a new record.
 
@@ -39,18 +39,21 @@ def callback(audio, recognizer, data_publisher, text_publisher, sample_rate, lan
         text_publisher.publish(spoken_text)
     except UnknownValueError:
         print("Google Speech Recognition unknown value")
+        mic_status_publisher.publish(True)
     except RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        mic_status_publisher.publish(True)
 
 
-def init_node(node_name, data_topic, text_topic):
+def init_node(node_name, data_topic, text_topic, mic_status_topic):
     rospy.init_node(node_name, anonymous=True)
     data_publisher = rospy.Publisher(data_topic, Int16MultiArray, queue_size=10)
     text_publisher = rospy.Publisher(text_topic, String, queue_size=10)
+    mic_status_publisher = rospy.Publisher(mic_status_topic, Bool, queue_size=1)
 
-    return data_publisher, text_publisher
+    return data_publisher, text_publisher, mic_status_publisher
 
-def listener(data_publisher, text_publisher, microphone_topic, sample_rate, language):
+def listener(data_publisher, text_publisher, mic_status_publisher, microphone_topic, sample_rate, language):
     """
     Start follow the audio recording.
 
@@ -69,10 +72,12 @@ def listener(data_publisher, text_publisher, microphone_topic, sample_rate, lang
     """
     # Initialize a Recognizer
     recognizer = sr.Recognizer()
+
     rospy.Subscriber(microphone_topic, Int16MultiArray, lambda audio : callback(audio, 
                                                                                 recognizer,
                                                                                 data_publisher, 
                                                                                 text_publisher,
+                                                                                mic_status_publisher,
                                                                                 sample_rate,
                                                                                 language))
     rospy.spin()
@@ -85,13 +90,16 @@ if __name__ == '__main__':
     node_name = config['nodes']['asr']
     data_topic = config['topics']['voiceData']
     text_topic = config['topics']['voiceText']
+    mic_status_topic = config['topics']['micStatus']
     microphone_topic = config['topics']['microphone']
     sample_rate = config['settings']['sampleRate']
     language = config['settings']['language']
 
-    data_publisher, text_publisher = init_node(node_name, data_topic, text_topic)
+
+    data_publisher, text_publisher, mic_status_publisher = init_node(node_name, data_topic, text_topicc)
     listener(data_publisher, 
-                text_publisher, 
+                text_publisher,
+                mic_status_publisher, 
                 microphone_topic,
                 sample_rate, 
                 language)
