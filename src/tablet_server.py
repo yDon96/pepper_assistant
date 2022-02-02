@@ -3,6 +3,7 @@ from naoqi import ALProxy
 from optparse import OptionParser
 from ros_pepper_pkg.srv import *
 import rospy
+import socket
 
 class TabletNode:
 
@@ -34,8 +35,13 @@ if __name__ == "__main__":
     parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
 
+    localhost = socket.gethostbyname(socket.gethostname())
+    http = 'http://'+localhost+':8000'
+
+    print(http)
     try:
         ttsnode = TabletNode(options.ip, int(options.port))
         ttsnode.start("pepper_tablet")
+        ttsnode.showText()
     except rospy.ROSInterruptException:
         pass
