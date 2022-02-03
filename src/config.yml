@@ -18,7 +18,7 @@ nodes:
     
 
 settings:
-    language: 'en-US'
+    language: 'en'
     sampleRate: 16000
     chunkSize: 1024
     calibrationTime: 3
