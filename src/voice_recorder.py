@@ -16,6 +16,7 @@ class Microphone:
         self.recognizer = recognizer
         self.publisher = publisher
         self.microphone = microphone
+        self.store = self.recognizer.energy_threshold
 
         
 
@@ -24,6 +25,13 @@ class Microphone:
         # `stop_listening` is now a function that, when called, stops background listening
         stop = self.recognizer.listen_in_background(self.microphone, 
                                                         lambda recognizer, audio : self.callback(audio))
+
+    def set_high_threshold(self):
+        self.store = self.recognizer.energy_threshold
+        self.recognizer.energy_threshold = 4000
+
+    def restore_threshold(self):
+        self.recognizer.energy_threshold = self.store
 
     
     def callback(self, audio):
@@ -48,7 +56,11 @@ class Microphone:
 def callback_microphone(set_on, microphone: Microphone):
     if set_on:
        print("Setting ON Mic")
-       microphone.start_recording()
+       microphone.restore_threshold()
+    else: 
+        print("Setting OFF Mic")
+        microphone.set_high_threshold()
+
 
 
 def calibrate_noise(microphone, recognizer, calibration_time, energy_threshold):
