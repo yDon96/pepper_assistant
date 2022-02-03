@@ -9,7 +9,7 @@ from speech_recognition import UnknownValueError, RequestError
 import os
     
 
-def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publisher, sample_rate, language):
+def callback(audio, recognizer, data_publisher, text_publisher, sample_rate, language):
     """
     Callback called each time there is a new record.
 
@@ -39,19 +39,16 @@ def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publi
         text_publisher.publish(spoken_text)
     except UnknownValueError:
         print("Google Speech Recognition unknown value")
-        mic_status_publisher.publish(True)
     except RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
-        mic_status_publisher.publish(True)
 
 
-def init_node(node_name, data_topic, text_topic, mic_status_topic):
+def init_node(node_name, data_topic, text_topic):
     rospy.init_node(node_name, anonymous=True)
     data_publisher = rospy.Publisher(data_topic, Int16MultiArray, queue_size=10)
     text_publisher = rospy.Publisher(text_topic, String, queue_size=10)
-    mic_status_publisher = rospy.Publisher(mic_status_topic, Bool, queue_size=1)
 
-    return data_publisher, text_publisher, mic_status_publisher
+    return data_publisher, text_publisher
 
 def listener(data_publisher, text_publisher, mic_status_publisher, microphone_topic, sample_rate, language):
     """
@@ -90,16 +87,14 @@ if __name__ == '__main__':
     node_name = config['nodes']['asr']
     data_topic = config['topics']['voiceData']
     text_topic = config['topics']['voiceText']
-    mic_status_topic = config['topics']['micStatus']
     microphone_topic = config['topics']['microphone']
     sample_rate = config['settings']['sampleRate']
     language = config['settings']['language']
 
 
-    data_publisher, text_publisher, mic_status_publisher = init_node(node_name, data_topic, text_topic, mic_status_topic)
+    data_publisher, text_publisher = init_node(node_name, data_topic, text_topic)
     listener(data_publisher, 
                 text_publisher,
-                mic_status_publisher, 
                 microphone_topic,
                 sample_rate, 
                 language)

@@ -22,9 +22,9 @@ class Microphone:
     def start_recording(self):
         # start listening in the background
         # `stop_listening` is now a function that, when called, stops background listening
-        with self.microphone as source:                # use the default microphone as the audio source
-            audio = self.recognizer.listen(source)
-            self.callback(audio)
+        stop = self.recognizer.listen_in_background(self.microphone, 
+                                                        lambda recognizer, audio : self.callback(audio))
+
     
     def callback(self, audio):
         """
