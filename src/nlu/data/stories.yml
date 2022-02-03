@@ -5,7 +5,7 @@ stories:
 - story: Remove from list
   steps: 
   - intent: remove_from_list
-  - action: action_remove_view
+  - action: utter_what_to_remove
   - intent: product
   - action: action_remove
   - action: utter_what_to_do

@@ -1,47 +1,30 @@
-version: "2.0"
+version: '2.0'
+
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
-  - add_to_list
-  - view_the_list
-  - quantity
-  - remove_from_list
-  - product
-  - update
-
-actions:
-  - action_view
-  - utter_greet
-  - utter_goodbye
-  - utter_sad_presentation
-  - utter_happy_presentation
-  - utter_deny_goodbye
-  - action_remove
-  - action_add
-  - utter_ask_add_form_product
-  - utter_ask_add_form_quantity
-  - utter_what_to_do
-  - action_remove_view
-  - action_update_view
-  - action_update
-  - utter_ask_update_form_product
-  - utter_ask_update_form_quantity
+- greet
+- goodbye
+- affirm
+- deny
+- mood_great
+- mood_unhappy
+- bot_challenge
+- add_to_list
+- view_the_list
+- quantity
+- remove_from_list
+- product
+- update
 
 entities:
-  - product
-  - quantity
-  - shopping_type
-  - user
-  
+- product
+- quantity
+- shopping_type
+- user
+
 slots:
   product:
     type: text
@@ -49,6 +32,58 @@ slots:
   quantity:
     type: any
     influence_conversation: false
+  user:
+    type: text
+    influence_conversation: false
+
+responses:
+  utter_greet:
+  - text: Hey {user}! I'm RobShop! How are you?
+  utter_sad_presentation:
+  - text: Don't worry {user}! a little shopping can help you cheer up! I'm here to help you with your purchases!
+  utter_happy_presentation:
+  - text: Great! 
+  - text: That's nice! 
+  utter_deny_goodbye:
+  - text: Ok, see you next time! Goodbye.
+  utter_goodbye:
+  - text: Bye {user}
+  - text: Goodbye {user}!
+  - text: Have a nice day {user}!
+  utter_ask_add_form_product:
+  - text: Which product do you want to add in your list?
+  - text: Which product do you want to insert in your list?
+  utter_ask_add_form_quantity:
+  - text: How many {product}s do you want?
+  utter_ask_update_form_product:
+  - text: Which product do you want to update in your list?
+  - text: Which product do you want to change in your list?
+  utter_ask_update_form_quantity:
+  - text: Please, insert the new quantity for {product}.
+  utter_what_to_do:
+  - text: I can add, remove or update a product of your shopping list or show you your list. What do you want me to do?
+  utter_what_to_remove:
+  - text: Which product do you want to remove from your list?
+  - text: Which product do you want to delete from your list?
+
+  
+actions:
+- action_add
+- action_remove
+- action_remove_view
+- action_update
+- action_update_view
+- action_view
+- utter_ask_add_form_product
+- utter_ask_add_form_quantity
+- utter_ask_update_form_product
+- utter_ask_update_form_quantity
+- utter_deny_goodbye
+- utter_goodbye
+- utter_greet
+- utter_happy_presentation
+- utter_sad_presentation
+- utter_what_to_do
 
 forms:
   add_form:
@@ -67,51 +102,3 @@ forms:
       quantity:
       - type: from_entity
         entity: quantity
-
-responses:
-  utter_greet:
-  - text: "Hey! I'm RobShop! How are you?"
-
-  utter_sad_presentation:
-  - text: "Don't worry! a little shopping can help you cheer up! I'm here to help you with your purchases! "
-
-  utter_happy_presentation:
-  - text: "Great! "
-  - text: "That's nice! "
-
-  utter_deny_goodbye:
-  - text: "Ok, see you next time! Goodbye."
-
-  utter_goodbye:
-  - text: "Bye"
-  - text: "Goodbye!"
-  - text: "Have a nice day!"
-
-  utter_ask_add_form_product:
-  - text: Which product do you want to add in your list?
-  - text: Which product do you want to insert in your list?
-  
-  utter_ask_add_form_quantity:
-  - text: How many {product}s do you want?
-
-  utter_ask_update_form_product:
-  - text: Which product do you want to update in your list?
-  - text: Which product do you want to change in your list?
-  utter_ask_update_form_quantity:
-  - text: Please, insert the new quantity for {product}.
-
-
-  utter_what_to_do:
-  - text: I can add a product in your list, update the quantity of a product in your list, remove a product from your list or show you your list. What do you want me to do?
-    buttons:
-    - title: "add a product"
-      payload: "/add_to_list"
-    - title: "update a product"
-      payload: "/update"
-    - title: "remove a product"
-      payload: "/remove_from_list"
-    - title: "show list"
-      payload: '/view_the_list{{"shopping_type":"shopping_list"}}'
-    - title: "quit"
-      payload: "/goodbye"
-

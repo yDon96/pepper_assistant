@@ -7,6 +7,12 @@ from speech_recognition import AudioData
 import speech_recognition as sr
 from speech_recognition import UnknownValueError, RequestError
 import os
+from std_msgs.msg import Bool
+
+execution_status = True
+def set_execution_status(status):
+    execution_status=status.data
+    
 
 def callback(audio, recognizer, data_publisher, text_publisher, sample_rate, language):
     """
@@ -27,18 +33,20 @@ def callback(audio, recognizer, data_publisher, text_publisher, sample_rate, lan
     language
         The language used by google to transcribe the audio
     """
-    data = np.array(audio.data,dtype=np.int16)
-    audio_data = AudioData(data.tobytes(), sample_rate, 2)
+    if execution_status:
+        
+        data = np.array(audio.data,dtype=np.int16)
+        audio_data = AudioData(data.tobytes(), sample_rate, 2)
 
-    try:
-        spoken_text= recognizer.recognize_google(audio_data, language=language)
-        print("Google Speech Recognition says: " + spoken_text)
-        data_publisher.publish(audio) # Publish audio only if it contains words
-        text_publisher.publish(spoken_text)
-    except UnknownValueError:
-        print("Google Speech Recognition unknown value")
-    except RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        try:
+            spoken_text= recognizer.recognize_google(audio_data, language=language)
+            print("Google Speech Recognition says: " + spoken_text)
+            data_publisher.publish(audio) # Publish audio only if it contains words
+            text_publisher.publish(spoken_text)
+        except UnknownValueError:
+            print("Google Speech Recognition unknown value")
+        except RequestError as e:
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
 def init_node(node_name, data_topic, text_topic):
@@ -48,7 +56,7 @@ def init_node(node_name, data_topic, text_topic):
 
     return data_publisher, text_publisher
 
-def listener(data_publisher, text_publisher, microphone_topic, sample_rate, language):
+def listener(data_publisher, text_publisher, microphone_topic, mic_status_topic, sample_rate, language):
     """
     Start follow the audio recording.
 
@@ -66,6 +74,7 @@ def listener(data_publisher, text_publisher, microphone_topic, sample_rate, lang
         The language used by google to transcribe the audio
     """
     # Initialize a Recognizer
+    rospy.Subscriber(mic_status_topic, Bool, set_execution_status)
     recognizer = sr.Recognizer()
     rospy.Subscriber(microphone_topic, Int16MultiArray, lambda audio : callback(audio, 
                                                                                 recognizer,
@@ -86,10 +95,12 @@ if __name__ == '__main__':
     microphone_topic = config['topics']['microphone']
     sample_rate = config['settings']['sampleRate']
     language = config['settings']['language']
+    mic_status_topic = config['topics']['micStatus']
 
     data_publisher, text_publisher = init_node(node_name, data_topic, text_topic)
     listener(data_publisher, 
                 text_publisher, 
-                microphone_topic, 
+                microphone_topic,
+                mic_status_topic, 
                 sample_rate, 
                 language)
