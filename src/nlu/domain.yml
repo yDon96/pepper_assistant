@@ -65,6 +65,12 @@ responses:
   utter_what_to_remove:
   - text: Which product do you want to remove from your list?
   - text: Which product do you want to delete from your list?
+  utter_view_list:
+  - custom: 
+     text: "{text}"
+     product: "{product}"
+     status: "{status}"
+
 
   
 actions:

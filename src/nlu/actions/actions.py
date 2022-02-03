@@ -114,12 +114,12 @@ def viewListDB(dispatcher, tracker):
             cur.execute(sql_Query, nome)
             records = cur.fetchall()
 
-            for record in records:
-              print(f"{record[1]} {record[0]}")
-              msg3 = f"{record[1]} {record[0]}"
-              dispatcher.utter_message(text=msg3)
+            #for record in records:
+              #  print(f"{record[1]} {record[0]}")
+              #  msg3 = f"{record[1]} {record[0]}"
+              #  dispatcher.utter_message(text=msg3)
                 
-             
+            dispatcher.utter_message(template="utter_view_list", text=msg, product=records, status="view")  
             
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data from PostgreSQL", error)
