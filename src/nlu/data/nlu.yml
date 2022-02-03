@@ -23,6 +23,8 @@ nlu:
     - [umberto](user): hello
     - [marina](user): hiii
     - [youssef](user): hello
+    - [sabrina](user): hi
+
 - intent: goodbye
   examples: |
     - [Pippo](user):  cu
@@ -36,6 +38,7 @@ nlu:
     - [Pippo](user):  bye bye
     - [tommy](user):  see you later
     - [sabrina](user): goodbye
+
 - intent: deny
   examples: |
     - [Pippo](user):  no
@@ -48,14 +51,14 @@ nlu:
 
 - intent: update
   examples: |
-    - [asia](user): Yes, i want to update a product.
-    - [asia](user): Yes, i want to update an element.
-    - [tommy](user): Yes, i want to modify a product in my shopping list.
-    - [asia](user): Yes, i want to update the quantity of a product.
-    - [tommy](user): Yes, put quantity [5](quantity) for the product [apple](product)
-    - [asia](user): Yes, put quantity [10](quantity) for the product [apple](product)
-    - [tommy](user): Yes, put quantity [2](quantity) for the product [apple](product)
-    - [tommy](user): Yes, put quantity [3](quantity) for the product [apple](product)
+    - [asia](user): I want to update a product.
+    - [asia](user): I want to update an element.
+    - [tommy](user): I want to modify a product in my shopping list.
+    - [asia](user): I want to update the quantity of a product.
+    - [tommy](user): I put quantity [5](quantity) for the product [apple](product)
+    - [asia](user): I put quantity [10](quantity) for the product [apple](product)
+    - [tommy](user): I put quantity [2](quantity) for the product [apple](product)
+    - [tommy](user): I put quantity [3](quantity) for the product [apple](product)
 
 - intent: mood_great
   examples: |
@@ -73,6 +76,8 @@ nlu:
     - [asia](user):  so so perfect
     - [asia](user):  so good
     - [Pippo](user):  so perfect
+
+
 - intent: mood_unhappy
   examples: |
     - [Pippo](user):  my day was horrible
@@ -91,7 +96,7 @@ nlu:
     - [Pippo](user):  so sad
 
 - intent: affirm
-  examples: |    
+  examples: |
     - [asia](user): yes
     - [asia](user): y
     - [tommy](user): indeed
@@ -112,31 +117,31 @@ nlu:
     - [tommy](user): I would like to put some products in my list
     - [Pippo](user): hello i want to add something in my list
     - [Pippo](user): hello Robshop! I would like to add some products in my list
-    - [asia](user): Yes, I would like to insert another product in my list
+    - [asia](user):  I would like to insert another product in my list
     - [tommy](user): sure! I want to add a new product in my list
-    - [tommy](user): Yes, I want to add a new product in my list
+    - [tommy](user): I want to add a new product in my list
     - [tommy](user): add a new product
     - [tommy](user): add another product
-    - [Pippo](user): Yes, I want to add a new product
-    - [Pippo](user): Yes, I would like to insert another product
-    - [asia](user): Yes, I want to add another product
-    - [asia](user): yes
-    - [asia](user): y
+    - [Pippo](user): I want to add a new product
+    - [Pippo](user): I would like to insert another product
+    - [asia](user): I want to add another product
     - [asia](user): indeed
     - [Pippo](user): of course
     - [Pippo](user): that sounds good
     - [Pippo](user): correct
     - [marina](user): add [pepper](product) to list
+    
 - intent: view_the_list
   examples: |
     - [Pippo](user):  I would like to view my [shopping list](shopping_type).
     - [tommy](user):  Could you show me my [shopping list](shopping_type)?
-    - [Pippo](user):  Yes, I want to view my [shopping list](shopping_type).
+    - [Pippo](user):  I want to view my [shopping list](shopping_type).
     - [youssef](user): show list
+
 - intent: product
   examples: |
     - [Pippo](user):[wheat](product)
-    - [asia](user):[rye](product) 
+    - [asia](user):[rye](product)
     - [asia](user):[oats](product)
     - [Pippo](user):[corn](product)
     - [asia](user):[barley](product)
@@ -319,7 +324,6 @@ nlu:
     - [Pippo](user):[coriander](product)
     - [Pippo](user):[soy sauce](product)
 
-
 - intent: quantity
   examples: |
     - [Pippo](user):  I want [7](quantity) [apples](product)
@@ -340,6 +344,7 @@ nlu:
     - [Pippo](user):  [8](quantity)
     - [Pippo](user):  [9](quantity)
     - [alex](user): [4](quantity)
+
 - intent: remove_from_list
   examples: |
     - [Pippo](user):  hello, I want to remove something from my list
@@ -352,11 +357,13 @@ nlu:
     - [Pippo](user):  I want to remove some product.
     - [Pippo](user):  I would like to remove some product.
     - [Pippo](user):  I would like to remove a product.
+    - [Alessia](user): remove
 
-- synonym: list
+- synonym: shopping list
   examples: |
-    - shopping list
+    - list
     - cart
+    - bag
 
 - synonym: add
   examples: |
@@ -365,15 +372,17 @@ nlu:
     - put
     - insert
     - enter
+
 - synonym: I am
   examples: |
     - i am
     - i'm
-    
+
 - synonym: remove
   examples: |
     - cancel
     - delete
+
 - regex: user
   examples: |
     - \.+?(?=:)

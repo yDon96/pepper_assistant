@@ -31,7 +31,6 @@ rules:
 - rule: update something in the list
   steps: 
   - intent: update
-  - action: action_update_view
   - action: update_form
   - active_loop: update_form
   - active_loop: null
