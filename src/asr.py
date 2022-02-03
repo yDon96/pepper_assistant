@@ -96,7 +96,7 @@ if __name__ == '__main__':
     language = config['settings']['language']
 
 
-    data_publisher, text_publisher, mic_status_publisher = init_node(node_name, data_topic, text_topicc)
+    data_publisher, text_publisher, mic_status_publisher = init_node(node_name, data_topic, text_topic, mic_status_topic)
     listener(data_publisher, 
                 text_publisher,
                 mic_status_publisher, 

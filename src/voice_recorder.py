@@ -70,7 +70,7 @@ def calibrate_noise(microphone, recognizer, calibration_time, energy_threshold):
     print("Calibrating...")
     with microphone as source:
         recognizer.adjust_for_ambient_noise(source, duration=calibration_time)
-        recognizer.energy_threshold = energy_threshold  
+        #recognizer.energy_threshold = energy_threshold  
     print("Calibration finished")
 
 
