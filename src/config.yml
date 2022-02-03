@@ -22,6 +22,7 @@ settings:
     sampleRate: 16000
     chunkSize: 1024
     calibrationTime: 3
+    energyThreshold: 100
     identificationThreshold: 0.75
     numFbanks: 64
 
