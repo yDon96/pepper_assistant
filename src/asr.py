@@ -50,7 +50,7 @@ def init_node(node_name, data_topic, text_topic):
 
     return data_publisher, text_publisher
 
-def listener(data_publisher, text_publisher, mic_status_publisher, microphone_topic, sample_rate, language):
+def listener(data_publisher, text_publisher, microphone_topic, sample_rate, language):
     """
     Start follow the audio recording.
 
@@ -74,7 +74,6 @@ def listener(data_publisher, text_publisher, mic_status_publisher, microphone_to
                                                                                 recognizer,
                                                                                 data_publisher, 
                                                                                 text_publisher,
-                                                                                mic_status_publisher,
                                                                                 sample_rate,
                                                                                 language))
     rospy.spin()
