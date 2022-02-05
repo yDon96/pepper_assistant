@@ -1,5 +1,7 @@
 .vscode
 __pycache__
+src/html/*
+!src/html/template.html
 __init__.py
 *.h5
 *.tar.gz

@@ -26,12 +26,13 @@
                 display: -ms-flexbox;
                 display: -webkit-flex;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
             }
             .row {
                 width: auto;
-                margin: auto 30px;
+                margin: 10px auto;
                 border: 2px solid #ccc;
                 border-radius: 15px;
                 background: #fff
@@ -46,15 +47,10 @@
                 text-align: left;
             }
         </style>
-        <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js">
-        </script>
-
-        <script src="typed.min.js"></script>
-        <script src="script.js"></script>
     </head>
     <body>
         
-        <div class="flex-container">
+        <div id= "container" class="flex-container">
             <div class="row"> 
                 <div class="flex-item">
                     
