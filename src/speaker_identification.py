@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import rospy
-from std_msgs.msg import Int16MultiArray
+from std_msgs.msg import Int16MultiArray, String, Bool
 import numpy as np
 import pickle
 import os
@@ -37,7 +37,31 @@ def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
     return get_deep_speaker(os.path.join(REF_PATH, path))
 
-def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold):
+def process_audio(data, sample_rate, num_fbanks):
+    result = np.array(data)
+
+    # to float32
+    result = result.astype(np.float32, order='C') / 32768.0
+
+    # Processing
+    result = get_mfcc(result, sample_rate, num_fbanks)
+    return result
+
+def get_label_from(prediction, identification_threshold):
+    result = None
+
+    if len(X) > 0:
+        # Distance between the sample and the support set
+        emb_voice = np.repeat(prediction, len(X), 0)
+
+        cos_dist = batch_cosine_similarity(np.array(X), emb_voice)
+        
+        # Matching
+        result = dist2id(cos_dist, y, identification_threshold, mode='avg')
+
+    return result
+
+def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold, sample_phrases, identity_publisher, sample_publisher, speaker_publisher):
     """
     Callback called each time there is a new record.
 
@@ -54,34 +78,45 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     identification_threshold
         The min value to assign a correct prediction
     """
-    audio_data = np.array(audio.data)
+    processed_audio = process_audio(audio.data, sample_rate, num_fbanks)
 
-    # to float32
-    audio_data = audio_data.astype(np.float32, order='C') / 32768.0
+    prediction = speaker_model.predict(np.expand_dims(processed_audio, 0))
 
-    # Processing
-    ukn = get_mfcc(audio_data, sample_rate, num_fbanks)
+    id_label = get_label_from(prediction, identification_threshold)
 
-    # Prediction
-    ukn = speaker_model.predict(np.expand_dims(ukn, 0))
-
-    if len(X) > 0:
-        # Distance between the sample and the support set
-        emb_voice = np.repeat(ukn, len(X), 0)
-
-        cos_dist = batch_cosine_similarity(np.array(X), emb_voice)
-        
-        # Matching
-        id_label = dist2id(cos_dist, y, identification_threshold, mode='avg')
+    print("work")
     
     if len(X) == 0 or id_label is None:
-        c = input("Voce non conosciuta. Vuoi inserire un nuovo campione? (S/N):")
-        if c.lower() == 's':
-            name = input("Inserisci il nome dello speaker:").lower()
-            X.append(ukn[0])
-            y.append(name)
+        sample_publisher.publish(True)
+
+        predictions = []
+
+        predictions.append(prediction[0])
+        
+        speaker_publisher.publish("I don't recognize your voice, do you want to register?")
+        response = rospy.wait_for_message("identity_text", String)
+
+        if response.data == "yes":      
+            print("sta andando")      
+            for phrase in sample_phrases:
+                print("forse")
+                speaker_publisher.publish(phrase)
+                result = rospy.wait_for_message("identity_data", Int16MultiArray)
+                processed_audio = process_audio(result.data, sample_rate, num_fbanks)
+                prediction = speaker_model.predict(np.expand_dims(processed_audio, 0))
+                predictions.append(prediction[0])
+
+        
+        speaker_publisher.publish("What's your name?")
+        name = rospy.wait_for_message("identity_text", String)
+        X.extend(predictions)
+        print([name]*len(predictions))
+        y.extend([name.data]*len(predictions))
+        sample_publisher.publish(False)
+        identity_publisher.publish(name)
     else:
-        print("Ha parlato:", id_label)
+        identity_publisher.publish(id_label)
+        print("The user is:", id_label)
 
 def init_node(node_name, dataset_path):
     """
@@ -97,8 +132,6 @@ def init_node(node_name, dataset_path):
     predictions, labels = load_dataset(dataset_path)
     X.extend(predictions)
     y.extend(labels)
-    print(X)
-    print(y)
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
@@ -117,9 +150,23 @@ def listener(sample_rate, num_fbanks, model_path, identification_threshold, data
     data_topic
         Topic in which is published audio data
     """
+    print(sample_rate)
     speaker_model = get_model(model_path)
-    rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold))
+    identity_publisher = rospy.Publisher('identity', String, queue_size=1)
+    sample_publisher = rospy.Publisher('sample', Bool, queue_size=1)
+    speaker_publisher = rospy.Publisher('output_text', String, queue_size=1)
+    sample_phrases = ["how are you?", "add bread to my shopping list","change my shopping list"]
+    rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, 
+                                                                            sample_rate, 
+                                                                            num_fbanks, 
+                                                                            speaker_model, 
+                                                                            identification_threshold,
+                                                                            sample_phrases,
+                                                                            identity_publisher, 
+                                                                            sample_publisher,
+                                                                            speaker_publisher))
     rospy.spin()
+        
         
 if __name__ == '__main__':
     REF_PATH = os.path.dirname(os.path.abspath(__file__))

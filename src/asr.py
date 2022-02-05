@@ -9,7 +9,27 @@ from speech_recognition import UnknownValueError, RequestError
 import os
     
 
-def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publisher, sample_rate, language):
+
+class PublisherProvider:
+
+    def __init__(self, data_topic, text_topic, identity_data_topic, identity_text_topic):
+        self.data_publisher = rospy.Publisher(data_topic, Int16MultiArray, queue_size=10)
+        self.text_publisher = rospy.Publisher(text_topic, String, queue_size=10)
+        self.identity_data_publisher = rospy.Publisher(identity_data_topic, Int16MultiArray, queue_size=1)
+        self.identity_text_publisher = rospy.Publisher(identity_text_topic, String, queue_size=1)
+        self.is_identity = False
+        
+
+    def get_publishers(self):
+        if not self.is_identity:
+            return self.data_publisher, self.text_publisher
+        else:
+            return self.identity_data_publisher, self.identity_text_publisher
+
+    def change_publisher(self, is_identity):
+        self.is_identity = is_identity
+
+def callback(audio, recognizer, publisher_provider, mic_status_publisher, sample_rate, language):
     """
     Callback called each time there is a new record.
 
@@ -35,6 +55,7 @@ def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publi
     try:
         spoken_text= recognizer.recognize_google(audio_data, language=language)
         print("Google Speech Recognition says: " + spoken_text)
+        data_publisher, text_publisher = publisher_provider.get_publishers()
         data_publisher.publish(audio) # Publish audio only if it contains words
         text_publisher.publish(spoken_text)
     except UnknownValueError:
@@ -44,16 +65,14 @@ def callback(audio, recognizer, data_publisher, text_publisher, mic_status_publi
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
         mic_status_publisher.publish(True)
 
-
-def init_node(node_name, data_topic, text_topic, mic_status_topic):
+def init_node(node_name, data_topic, text_topic, identity_data_topic, identity_text_topic, mic_status_topic):
     rospy.init_node(node_name, anonymous=True)
-    data_publisher = rospy.Publisher(data_topic, Int16MultiArray, queue_size=10)
-    text_publisher = rospy.Publisher(text_topic, String, queue_size=10)
+    publisher_provider = PublisherProvider(data_topic, text_topic, identity_data_topic, identity_text_topic)
     mic_status_publisher = rospy.Publisher(mic_status_topic, Bool, queue_size=1)
 
-    return data_publisher, text_publisher, mic_status_publisher
+    return publisher_provider, mic_status_publisher
 
-def listener(data_publisher, text_publisher, mic_status_publisher, microphone_topic, sample_rate, language):
+def listener(publisher_provider, mic_status_publisher, microphone_topic, sample_rate, language):
     """
     Start follow the audio recording.
 
@@ -72,11 +91,10 @@ def listener(data_publisher, text_publisher, mic_status_publisher, microphone_to
     """
     # Initialize a Recognizer
     recognizer = sr.Recognizer()
-
+    rospy.Subscriber("sample", Bool, publisher_provider.change_publisher)
     rospy.Subscriber(microphone_topic, Int16MultiArray, lambda audio : callback(audio, 
                                                                                 recognizer,
-                                                                                data_publisher, 
-                                                                                text_publisher,
+                                                                                publisher_provider,
                                                                                 mic_status_publisher,
                                                                                 sample_rate,
                                                                                 language))
@@ -95,10 +113,8 @@ if __name__ == '__main__':
     sample_rate = config['settings']['sampleRate']
     language = config['settings']['language']
 
-
-    data_publisher, text_publisher, mic_status_publisher = init_node(node_name, data_topic, text_topic, mic_status_topic)
-    listener(data_publisher, 
-                text_publisher,
+    publisher_provider, mic_status_publisher = init_node(node_name, data_topic, text_topic, "identity_data", "identity_text", mic_status_topic)
+    listener(publisher_provider,
                 mic_status_publisher, 
                 microphone_topic,
                 sample_rate, 
