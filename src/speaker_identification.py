@@ -94,6 +94,11 @@ def init_node(node_name, dataset_path):
     """
     rospy.init_node(node_name, anonymous=True)
     rospy.on_shutdown(lambda:save_dataset(dataset_path))
+    predictions, labels = load_dataset(dataset_path)
+    X.extend(predictions)
+    y.extend(labels)
+    print(X)
+    print(y)
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
