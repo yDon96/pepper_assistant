@@ -83,7 +83,7 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     else:
         print("Ha parlato:", id_label)
 
-def init_node(node_name):
+def init_node(node_name, dataset_path):
     """
     Init the node.
 
@@ -93,6 +93,7 @@ def init_node(node_name):
         Name assigned to the node
     """
     rospy.init_node(node_name, anonymous=True)
+    rospy.on_shutdown(lambda:save_dataset(dataset_path))
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
@@ -126,8 +127,9 @@ if __name__ == '__main__':
     model_path = config['models']['defaults']
     identification_threshold = config['settings']['identificationThreshold']
     data_topic = config['topics']['voiceData']
+    dataset_path = os.path.join(REF_PATH, config['models']['dataset'])
 
-    init_node(node_name)
+    init_node(node_name, dataset_path)
     listener(sample_rate, 
                 num_fbanks, 
                 model_path, 
