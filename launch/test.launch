@@ -1,0 +1,14 @@
+<launch>
+        <arg name="node_start_delay" default="50.0" />
+        <param name="service_tag" type="str" value="pyTts"/>
+        <param name="interface_type" type="str" value="voice_identity" />
+        <node pkg="ros_pepper_pkg" name="rasa_action" type="rasa_action.sh" output="screen" args="src/nlu/" />
+        <node pkg="ros_pepper_pkg" name="rasa_server" type="rasa_server.sh" output="screen" args="src/nlu/" />
+        <node pkg="ros_pepper_pkg" type="nlu_interface.py" name="nlu_interface" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="nlu_server.py" name="nlu_server" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+            <node pkg="ros_pepper_pkg" type="speaker_identification.py" name="speaker_identification" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="voice_recorder.py" name="voice_recorder" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="asr.py" name="asr" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="tts_interface.py" name="tts_interface" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="py_tts_server.py" name="py_tts" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+</launch>
