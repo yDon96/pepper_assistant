@@ -2,6 +2,15 @@ version: "2.0"
 
 rules:
 
+- rule: Remove from list
+  steps: 
+  - intent: remove_from_list
+  - action: remove_form
+  - active_loop: remove_form
+  - active_loop: null
+  - action: action_remove
+  - action: utter_what_to_do
+
 - rule: Say goodbye anytime the user says goodbye
   steps:
   - intent: goodbye

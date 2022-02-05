@@ -33,9 +33,23 @@ def addProductDB(dispatcher, tracker):
         params = configDB()
         connection = psycopg2.connect(**params)
         cursor = connection.cursor()
-        postgres_insert_query = """ INSERT INTO  shopping_list (nome, prodotto, quantità) VALUES (%s,%s,%s)"""
-        record_to_insert = (user, product, quantity)
-        cursor.execute(postgres_insert_query, record_to_insert)
+        ##added by sabrina 13:37
+        sql_Query = "select quantità from shopping_list where (nome =%s and prodotto =%s)"
+        cursor.execute(sql_Query, (user,product))
+        records = cursor.fetchall()
+
+        if len(records)!=0:
+            quantity = int(quantity)+int(records[0][0]) #somma della quantità se il prodotto è gia presente
+            postgres_insert_query = """ UPDATE shopping_list SET quantità= %s where (nome=%s and prodotto=%s)"""
+            
+            record_to_insert = (str(quantity), user, product)
+            cursor.execute(postgres_insert_query, record_to_insert)
+        
+        else:
+        ######################
+            postgres_insert_query = """ INSERT INTO  shopping_list (nome, prodotto, quantità) VALUES (%s,%s,%s)"""
+            record_to_insert = (user, product, quantity)
+            cursor.execute(postgres_insert_query, record_to_insert)
         connection.commit()
         count = cursor.rowcount
         print(count, "Record inserted successfully into shopping list table")
@@ -58,7 +72,7 @@ def updateListDB(dispatcher, tracker):
         msg1= "Ok, the product that you want update is: " + str(product_to_update)
         print(msg1)
         try:
-            updateProductDB(user_to_update, product_to_update, quantity_to_update)
+            updateProductDB(dispatcher, user_to_update, product_to_update, quantity_to_update)
             msg2 = f"Ok the quantity of the product has been updated!"  
             dispatcher.utter_message(text=msg2)
         except (Exception, psycopg2.Error) as error:        
@@ -68,10 +82,25 @@ def updateListDB(dispatcher, tracker):
             msg4 = f"Do you want to do something else?"
             dispatcher.utter_message(text=msg4)
 
-def updateProductDB(user, product,quantity):
+def updateProductDB(dispatcher,user, product,quantity):
     params = configDB()
     connection = psycopg2.connect(**params)
     cursor = connection.cursor()
+#########
+   # sql_Query = "select * from shopping_list where (nome = %s and prodotto = %s)"
+   # cur = connection.cursor()
+    #cur.execute(sql_Query,(user,product))
+    #records = cur.fetchall()
+    #print(" r : ", records)
+    
+    #if len(records)==0:
+    #    msg4 = f"The product is not present in the list"
+     #   dispatcher.utter_message(text=msg4)
+
+##########
+
+
+
     postgres_insert_query = """ UPDATE shopping_list SET quantità= %s where (nome=%s and prodotto=%s)"""
     record_to_update = (quantity, user, product)
     cursor.execute(postgres_insert_query, record_to_update)
@@ -113,11 +142,14 @@ def viewListDB(dispatcher, tracker):
             cur = conn.cursor()
             cur.execute(sql_Query, nome)
             records = cur.fetchall()
-
-            for record in records:
-              print(f"{record[1]} {record[0]}")
-              msg3 = f"{record[1]} {record[0]}"
-              dispatcher.utter_message(text=msg3)
+            if len(records)==0:
+                msg4 = f"Your list is empty!"
+                dispatcher.utter_message(text=msg4)
+            else:
+                for record in records:
+                    print(f"{record[1]} {record[0]}")
+                    msg3 = f"{record[1]} {record[0]}"
+                    dispatcher.utter_message(text=msg3)
                 
              
             

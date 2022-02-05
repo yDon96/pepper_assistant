@@ -58,26 +58,24 @@ responses:
   utter_ask_update_form_product:
   - text: Which product do you want to update in your list?
   - text: Which product do you want to change in your list?
+  utter_ask_remove_form_product:
+  - text: Which product do you want to remove from your list?
   utter_ask_update_form_quantity:
   - text: Please, insert the new quantity for {product}.
   utter_what_to_do:
   - text: I can add, remove or update a product of your shopping list or show you your list. What do you want me to do?
-  utter_what_to_remove:
-  - text: Which product do you want to remove from your list?
-  - text: Which product do you want to delete from your list?
-
+  
   
 actions:
 - action_add
 - action_remove
-- action_remove_view
 - action_update
-- action_update_view
 - action_view
 - utter_ask_add_form_product
 - utter_ask_add_form_quantity
 - utter_ask_update_form_product
 - utter_ask_update_form_quantity
+- utter_ask_remove_form_product
 - utter_deny_goodbye
 - utter_goodbye
 - utter_greet
@@ -102,3 +100,8 @@ forms:
       quantity:
       - type: from_entity
         entity: quantity
+  remove_form:
+    required_slots:
+      product:
+      - type: from_entity
+        entity: product
