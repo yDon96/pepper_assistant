@@ -28,6 +28,7 @@ settings:
 
 models:
     defaults: 'models/deep_speaker.h5'
+    dataset: 'data/dataset.hdf5'
 
 nlu:
     serverUrl: 'http://localhost:5002/webhooks/rest/webhook'
