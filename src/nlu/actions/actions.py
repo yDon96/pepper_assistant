@@ -19,7 +19,7 @@ def addProductDB(dispatcher, tracker):
     product = tracker.get_slot("product")
     quantity = tracker.get_slot("quantity")
     user = next(tracker.get_latest_entity_values("user"), None)
-
+    record=[]
     print("\nUser:", user)
     print("\nProduct:",product)
     print("\nQuantity:",quantity)
@@ -41,19 +41,21 @@ def addProductDB(dispatcher, tracker):
         if len(records)!=0:
             quantity = int(quantity)+int(records[0][0]) #somma della quantità se il prodotto è gia presente
             postgres_insert_query = """ UPDATE shopping_list SET quantità= %s where (nome=%s and prodotto=%s)"""
-            
             record_to_insert = (str(quantity), user, product)
             cursor.execute(postgres_insert_query, record_to_insert)
-        
+            record.extend([product, quantity])
+            msg3 = f"The quantity of the product has been update!"              
+            dispatcher.utter_message(template="utter_update_list", text=msg3, product=record, status="add")
         else:
         ######################
             postgres_insert_query = """ INSERT INTO  shopping_list (nome, prodotto, quantità) VALUES (%s,%s,%s)"""
             record_to_insert = (user, product, quantity)
             cursor.execute(postgres_insert_query, record_to_insert)
+            record.extend([product, quantity])
+            msg3 = f"Record inserted successfully into shopping list!"              
+            dispatcher.utter_message(template="utter_update_list", text=msg3, product=record, status="add")
         connection.commit()
         count = cursor.rowcount
-        print(count, "Record inserted successfully into shopping list table")
-
     # closing database connection.
     if connection:
         cursor.close()
@@ -73,8 +75,10 @@ def updateListDB(dispatcher, tracker):
         print(msg1)
         try:
             updateProductDB(dispatcher, user_to_update, product_to_update, quantity_to_update)
-            msg2 = f"Ok the quantity of the product has been updated!"  
-            dispatcher.utter_message(text=msg2)
+            record=[]
+            record.extend([product_to_update, quantity_to_update])
+            msg2= f"Record update successfully into shopping list!"              
+            dispatcher.utter_message(template="utter_update_list", text=msg2, product=record, status="update")
         except (Exception, psycopg2.Error) as error:        
             print("Failed to update record into shopping list table", error)
             msg3 = f"The product is not present!"
@@ -86,7 +90,7 @@ def updateProductDB(dispatcher,user, product,quantity):
     params = configDB()
     connection = psycopg2.connect(**params)
     cursor = connection.cursor()
-#########
+ #########
    # sql_Query = "select * from shopping_list where (nome = %s and prodotto = %s)"
    # cur = connection.cursor()
     #cur.execute(sql_Query,(user,product))
@@ -96,19 +100,13 @@ def updateProductDB(dispatcher,user, product,quantity):
     #if len(records)==0:
     #    msg4 = f"The product is not present in the list"
      #   dispatcher.utter_message(text=msg4)
-
-##########
-
-
-
+ ##########
     postgres_insert_query = """ UPDATE shopping_list SET quantità= %s where (nome=%s and prodotto=%s)"""
     record_to_update = (quantity, user, product)
     cursor.execute(postgres_insert_query, record_to_update)
-
     connection.commit()
     count = cursor.rowcount
     print(count, "Record update successfully into shopping list table")
-
     # closing database connection.
     if connection:
         cursor.close()
@@ -146,13 +144,12 @@ def viewListDB(dispatcher, tracker):
                 msg4 = f"Your list is empty!"
                 dispatcher.utter_message(text=msg4)
             else:
-                for record in records:
-                    print(f"{record[1]} {record[0]}")
-                    msg3 = f"{record[1]} {record[0]}"
-                    dispatcher.utter_message(text=msg3)
-                
-             
-            
+                #for record in records:
+                    #print(f"{record[1]} {record[0]}")
+                    #msg3 = f"{record[1]} {record[0]}"
+                    #dispatcher.utter_message(text=msg3) 
+                msg = f"Your shopping list is shown on my tablet"
+                dispatcher.utter_message(template="utter_view_list", text=msg, product=records, status="view")      
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data from PostgreSQL", error)
         finally:
@@ -188,9 +185,10 @@ def removeElemDB(dispatcher,tracker):
             print(name+" "+product)
             cur.execute("""delete from shopping_list where (nome = %s and prodotto = %s)""",(name,product))
             conn.commit()
-            msg3 = f"The product has been removed!"
-            dispatcher.utter_message(text=msg3)
-
+            record=[]
+            record.extend([product, records[0][2]])
+            msg3 = f"The product has been removed!"              
+            dispatcher.utter_message(template="utter_update_list", text=msg3, product=record, status="remove")
     except(Exception,psycopg2.Error) as err:
         print("Operation failed with error:",err)
     finally:
