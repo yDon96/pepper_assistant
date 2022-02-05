@@ -12,20 +12,25 @@ class TabletNode:
         self.port = port
         self.http_server = http_server
         self.tablet = ALProxy("ALTabletService", ip, port)
+        self.show_web_page()     
         
 
-    def showText(self):
+    def show_web_page(self):
         try:
             self.tablet.loadUrl(self.http_server)
             self.tablet.showWebview()
         except:
-            self.tablet = ALProxy("ALTabletService", ip, port)
+            self.tablet = ALProxy("ALTabletService", self.ip, self.port)
             self.tablet.loadUrl(self.http_server)
             self.tablet.showWebview()
+
+    def reload_web_page(self, msg):
+        self.tablet.reloadPage(True)
+        return "ACK"
     
     def start(self,service_name):
         rospy.init_node(service_name)
-        rospy.Service(service_name, Tts, self.showText)
+        rospy.Service(service_name, Html, self.reload_web_page)
 
         rospy.spin()
 
@@ -38,10 +43,8 @@ if __name__ == "__main__":
     localhost = socket.gethostbyname(socket.gethostname())
     http = 'http://'+localhost+':8000'
 
-    print(http)
     try:
-        ttsnode = TabletNode(options.ip, int(options.port),http)
-        ttsnode.start("pepper_tablet")
-        ttsnode.showText()
+        ttsnode = TabletNode(options.ip, int(options.port), http)
+        ttsnode.start("tablet_server")
     except rospy.ROSInterruptException:
         pass
