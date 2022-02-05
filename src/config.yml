@@ -14,6 +14,7 @@ nodes:
     pyTts: 'py_tts'
     pepperTts: 'pepper_tts'
     ttsInterface: 'tts_interface'
+    htmlServer: 'wb_server'
 
 settings:
     language: 'en-US'
