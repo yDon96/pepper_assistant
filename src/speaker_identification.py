@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import os
 import yaml
+import h5py
 
 from utils.audio import get_mfcc
 from utils.model import get_deep_speaker
@@ -13,6 +14,24 @@ from utils.utils import batch_cosine_similarity, dist2id
 n_embs = 0
 X = []
 y = []
+
+def save_dataset(dataset_path):
+    predictions = np.array(X)
+    dt = h5py.special_dtype(vlen=str)
+    labels = np.array(y, dtype=dt) 
+
+    with h5py.File(dataset_path, "w") as h5f :
+        h5f.create_dataset("predictions", data=predictions)
+        h5f.create_dataset("labels", data=labels)
+
+def load_dataset(dataset_path):
+    predictions = []
+    labels = []
+    if os.path.isfile(dataset_path):        
+        with h5py.File(dataset_path, 'r') as dataset:
+            predictions = dataset['predictions'][:].tolist()
+            labels = dataset['labels'][:].tolist() 
+    return predictions, labels   
 
 def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
