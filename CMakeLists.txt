@@ -59,6 +59,7 @@ add_service_files(
   FILES
   Dialogue.srv
   Tts.srv
+  Html.srv
 )
 
 ## Generate actions in the 'action' folder

@@ -3,6 +3,7 @@ topics:
     voiceData: 'voice_data'
     voiceText: 'voice_txt'
     outputText: 'output_text'
+    htmlData: 'html_data'
     micStatus:  'mic_status'
 
 
@@ -15,7 +16,9 @@ nodes:
     pyTts: 'py_tts'
     pepperTts: 'pepper_tts'
     ttsInterface: 'tts_interface'
-    
+    htmlInterface: 'html_interface'
+    htmlServer: 'wb_server'
+
 
 settings:
     language: 'en-US'
@@ -39,4 +42,9 @@ interfaceType:
     voice: 'voice'
 
 tts:
-    speechRate: 150
+    speechRate: 100
+
+html:
+    template: 'html/template.html'
+    output: 'html/index.html'
+
