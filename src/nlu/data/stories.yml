@@ -2,14 +2,6 @@ version: "2.0"
 
 stories:
 
-- story: Remove from list
-  steps: 
-  - intent: remove_from_list
-  - action: action_remove_view
-  - intent: product
-  - action: action_remove
-  - action: utter_what_to_do
-
 
 - story: happy path continue
   steps:

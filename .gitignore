@@ -5,3 +5,4 @@ src/html/*
 __init__.py
 *.h5
 *.tar.gz
+*.hdf5

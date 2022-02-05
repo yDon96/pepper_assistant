@@ -4,6 +4,7 @@ topics:
     voiceText: 'voice_txt'
     outputText: 'output_text'
     htmlData: 'html_data'
+    micStatus:  'mic_status'
 
 
 nodes:
@@ -18,16 +19,19 @@ nodes:
     htmlInterface: 'html_interface'
     htmlServer: 'wb_server'
 
+
 settings:
     language: 'en-US'
     sampleRate: 16000
     chunkSize: 1024
     calibrationTime: 3
+    energyThreshold: 100
     identificationThreshold: 0.75
     numFbanks: 64
 
 models:
     defaults: 'models/deep_speaker.h5'
+    dataset: 'data/dataset.hdf5'
 
 nlu:
     serverUrl: 'http://localhost:5002/webhooks/rest/webhook'
@@ -43,3 +47,4 @@ tts:
 html:
     template: 'html/template.html'
     output: 'html/index.html'
+

@@ -14,7 +14,7 @@ def get_post_message(text):
     text 
         String to send as message
     """
-    return { "sender": 'bot', "message": text }
+    return { "sender": 'bot', "message": f'marina: {text}' }
 
 def get_dialogue_response_from(rest_response):
     """

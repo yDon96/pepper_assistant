@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import os
 import yaml
+import h5py
 
 from utils.audio import get_mfcc
 from utils.model import get_deep_speaker
@@ -13,6 +14,24 @@ from utils.utils import batch_cosine_similarity, dist2id
 n_embs = 0
 X = []
 y = []
+
+def save_dataset(dataset_path):
+    predictions = np.array(X)
+    dt = h5py.special_dtype(vlen=str)
+    labels = np.array(y, dtype=dt) 
+
+    with h5py.File(dataset_path, "w") as h5f :
+        h5f.create_dataset("predictions", data=predictions)
+        h5f.create_dataset("labels", data=labels)
+
+def load_dataset(dataset_path):
+    predictions = []
+    labels = []
+    if os.path.isfile(dataset_path):        
+        with h5py.File(dataset_path, 'r') as dataset:
+            predictions = dataset['predictions'][:].tolist()
+            labels = dataset['labels'][:].tolist() 
+    return predictions, labels   
 
 def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -64,7 +83,7 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     else:
         print("Ha parlato:", id_label)
 
-def init_node(node_name):
+def init_node(node_name, dataset_path):
     """
     Init the node.
 
@@ -74,6 +93,12 @@ def init_node(node_name):
         Name assigned to the node
     """
     rospy.init_node(node_name, anonymous=True)
+    rospy.on_shutdown(lambda:save_dataset(dataset_path))
+    predictions, labels = load_dataset(dataset_path)
+    X.extend(predictions)
+    y.extend(labels)
+    print(X)
+    print(y)
 
 def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
     """
@@ -107,8 +132,9 @@ if __name__ == '__main__':
     model_path = config['models']['defaults']
     identification_threshold = config['settings']['identificationThreshold']
     data_topic = config['topics']['voiceData']
+    dataset_path = os.path.join(REF_PATH, config['models']['dataset'])
 
-    init_node(node_name)
+    init_node(node_name, dataset_path)
     listener(sample_rate, 
                 num_fbanks, 
                 model_path, 
