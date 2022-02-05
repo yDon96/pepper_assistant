@@ -36,3 +36,7 @@ interfaceType:
 
 tts:
     speechRate: 100
+
+html:
+    template: 'html/template.html'
+    output: 'html/index.html'
