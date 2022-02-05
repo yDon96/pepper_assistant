@@ -4,6 +4,7 @@ topics:
     voiceText: 'voice_txt'
     outputText: 'output_text'
     micStatus:  'mic_status'
+    identity: 'identity'
 
 
 nodes:
@@ -37,6 +38,7 @@ interfaceType:
     terminal: 'terminal'
     voiceTerminal: 'voice_terminal'
     voice: 'voice'
+    voiceIdentity: 'voice_identity'
 
 tts:
     speechRate: 150

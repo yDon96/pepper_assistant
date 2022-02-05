@@ -5,7 +5,7 @@ import requests
 import yaml
 import os
 
-def get_post_message(text):
+def get_post_message(text, identity):
     """
     Generate json of the post request.
 
@@ -14,7 +14,7 @@ def get_post_message(text):
     text 
         String to send as message
     """
-    return { "sender": 'bot', "message": f'marina: {text}' }
+    return { "sender": 'bot', "message": f'{identity}: {text}' }
 
 def get_dialogue_response_from(rest_response):
     """
@@ -43,7 +43,7 @@ def handle_service(dialogue_request, server_url):
     server_url
         Url of nlu server
     """
-    message = get_post_message(dialogue_request.input_text)
+    message = get_post_message(dialogue_request.input_text,dialogue_request.identity)
     rest_response = requests.post(server_url, json=message)
     dialogue_response = get_dialogue_response_from(rest_response)
 
