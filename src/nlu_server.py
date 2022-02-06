@@ -4,6 +4,7 @@ import rospy
 import requests
 import yaml
 import os
+import json
 
 def get_post_message(text):
     """
@@ -29,6 +30,9 @@ def get_dialogue_response_from(rest_response):
     result.answer = ""
     for i in rest_response.json():
         result.answer += i['text'] + ' ' if 'text' in i else ''
+
+    data = {"text": result.answer, "products": None}
+    result.json = json.dumps(data)     
 
     return result
 
