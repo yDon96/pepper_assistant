@@ -12,4 +12,4 @@ create table shopping_list(
 );
 
 
-insert into shopping_list (nome, prodotto, tag_value) values('Rossi', 'Book', 12);
+insert into shopping_list (nome, prodotto, quantità) values('Rossi', 'Book', 12);

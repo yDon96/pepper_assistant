@@ -19,15 +19,15 @@ echo "Creating variables for use throughout the PSQL installation process"
 # $packages is an array containing the dependencies for PostgreSQL
 packages=('git' 'gcc' 'tar' 'gzip' 'libreadline5' 'make' 'zlib1g' 'zlib1g-dev' 'flex' 'bison' 'perl' 'python3' 'tcl' 'gettext' 'odbc-postgresql' 'libreadline6-dev')
 # $rfolder is the install directory for PostgreSQL
-rfolder='/postgres'
+rfolder='/usr/bin/postgres'
 # $dfolder is the root directory for various types of read-only data files
-dfolder='/postgres/data'
+dfolder='/usr/bin/postgres/data'
 # $gitloc is the location of the PosgreSQL git repo
 gitloc='git://git.postgresql.org/git/postgresql.git'
 # $sysuser is the system user for running PostgreSQL
 sysuser='postgres'
 # $setupscript is the sql script for creating the PSQL user and creating a database.
-setupscript='$(dirname '$0')/setupDB.sql'
+setupscript="$(dirname "$0")/setupDB.sql"
 # $logfile is the log file for this installation.
 logfile='psqlinstall-log'
 
@@ -57,7 +57,7 @@ sudo adduser --system $sysuser >> $logfile
 # Section 5 - Pull down PSQL using git
 
 echo "Pulling down PostgreSQL from $gitloc"
-# git clone $gitloc ~/postgresql >> $logfile
+git clone $gitloc ~/postgresql >> $logfile
 
 
 # Section 6 - Install and configure PSQL
@@ -119,4 +119,7 @@ $rfolder/bin/psql -U postgres -f $setupscript
 # Section 9 - test_postgres is queried
 
 echo "Querying the newly created table in the newly created database."
-/postgres/bin/psql -c 'select * from shopping_list;' -U psqluser test_postgres;
+/usr/bin/postgres/bin/psql -c 'select * from shopping_list;' -U psqluser test_postgres;
+
+# Section 10 - install python module for postgres
+pip install psycopg2
