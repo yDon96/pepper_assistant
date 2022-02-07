@@ -11,7 +11,7 @@ intents:
 - deny
 - mood_great
 - mood_unhappy
-- bot_challenge
+- empty_list
 - add_to_list
 - view_the_list
 - quantity
@@ -80,6 +80,7 @@ actions:
 - action_remove
 - action_update
 - action_view
+- action_empty
 - utter_ask_add_form_product
 - utter_ask_add_form_quantity
 - utter_ask_update_form_product
