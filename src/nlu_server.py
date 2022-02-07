@@ -64,7 +64,6 @@ def get_dialogue_response_from(rest_response):
     data = {"text": result.answer, "products": None}
     result.json = json.dumps(data)     
 
-    print(result)
     return result
 
 def handle_service(dialogue_request, server_url):
