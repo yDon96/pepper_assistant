@@ -83,8 +83,6 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     prediction = speaker_model.predict(np.expand_dims(processed_audio, 0))
 
     id_label = get_label_from(prediction, identification_threshold)
-
-    print("work")
     
     if len(X) == 0 or id_label is None:
         sample_publisher.publish(True)
@@ -93,13 +91,12 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
 
         predictions.append(prediction[0])
         
-        speaker_publisher.publish("I don't recognize your voice, do you want to register?")
+        speaker_publisher.publish("I don't recognize your voice, do you want to register? Please say yes or no.")
         response = rospy.wait_for_message("identity_text", String)
 
-        if response.data == "yes":      
-            print("sta andando")      
+        if "yes" in response.data.lower():   
+            speaker_publisher.publish("Repeat the following sentences.")
             for phrase in sample_phrases:
-                print("forse")
                 speaker_publisher.publish(phrase)
                 result = rospy.wait_for_message("identity_data", Int16MultiArray)
                 processed_audio = process_audio(result.data, sample_rate, num_fbanks)
@@ -107,10 +104,9 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
                 predictions.append(prediction[0])
 
         
-        speaker_publisher.publish("What's your name?")
+        speaker_publisher.publish("Perfect. Tell me your name to finish the registration.")
         name = rospy.wait_for_message("identity_text", String)
         X.extend(predictions)
-        print([name]*len(predictions))
         y.extend([name.data]*len(predictions))
         sample_publisher.publish(False)
         identity_publisher.publish(name)
@@ -118,7 +114,7 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
         identity_publisher.publish(id_label)
         print("The user is:", id_label)
 
-def init_node(node_name, dataset_path):
+def init_node(node_name, dataset_path, identity_topic, sample_topic, output_topic):
     """
     Init the node.
 
@@ -128,12 +124,17 @@ def init_node(node_name, dataset_path):
         Name assigned to the node
     """
     rospy.init_node(node_name, anonymous=True)
+    identity_publisher = rospy.Publisher(identity_topic, String, queue_size=1)
+    sample_publisher = rospy.Publisher(sample_topic, Bool, queue_size=1)
+    speaker_publisher = rospy.Publisher(output_topic, String, queue_size=1)
     rospy.on_shutdown(lambda:save_dataset(dataset_path))
     predictions, labels = load_dataset(dataset_path)
     X.extend(predictions)
     y.extend(labels)
 
-def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
+    return identity_publisher, sample_publisher, speaker_publisher
+
+def listener(sample_rate, num_fbanks, model_path, sample_phrases, identity_publisher, sample_publisher, speaker_publisher, identification_threshold, data_topic):
     """
     Main function of the node.
 
@@ -150,12 +151,7 @@ def listener(sample_rate, num_fbanks, model_path, identification_threshold, data
     data_topic
         Topic in which is published audio data
     """
-    print(sample_rate)
     speaker_model = get_model(model_path)
-    identity_publisher = rospy.Publisher('identity', String, queue_size=1)
-    sample_publisher = rospy.Publisher('sample', Bool, queue_size=1)
-    speaker_publisher = rospy.Publisher('output_text', String, queue_size=1)
-    sample_phrases = ["how are you?", "add bread to my shopping list","change my shopping list"]
     rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, 
                                                                             sample_rate, 
                                                                             num_fbanks, 
@@ -179,11 +175,24 @@ if __name__ == '__main__':
     model_path = config['models']['defaults']
     identification_threshold = config['settings']['identificationThreshold']
     data_topic = config['topics']['voiceData']
+    identity_topic = config['topics']['identity']
+    sample_topic = config['topics']['sample']
+    output_topic = config['topics']['outputText']
     dataset_path = os.path.join(REF_PATH, config['models']['dataset'])
+    sample_phrases = ["how are you?", "add bread to my shopping list","change my shopping list"]
 
-    init_node(node_name, dataset_path)
+
+    identity_publisher, sample_publisher, speaker_publisher = init_node(node_name, 
+                                                                        dataset_path, 
+                                                                        identity_topic, 
+                                                                        sample_topic, 
+                                                                        output_topic)
     listener(sample_rate, 
                 num_fbanks, 
                 model_path, 
+                sample_phrases, 
+                identity_publisher, 
+                sample_publisher, 
+                speaker_publisher,
                 identification_threshold, 
                 data_topic)

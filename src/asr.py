@@ -72,7 +72,7 @@ def init_node(node_name, data_topic, text_topic, identity_data_topic, identity_t
 
     return publisher_provider, mic_status_publisher
 
-def listener(publisher_provider, mic_status_publisher, microphone_topic, sample_rate, language):
+def listener(publisher_provider, mic_status_publisher, microphone_topic, sample_topic, sample_rate, language):
     """
     Start follow the audio recording.
 
@@ -91,7 +91,7 @@ def listener(publisher_provider, mic_status_publisher, microphone_topic, sample_
     """
     # Initialize a Recognizer
     recognizer = sr.Recognizer()
-    rospy.Subscriber("sample", Bool, publisher_provider.change_publisher)
+    rospy.Subscriber(sample_topic, Bool, publisher_provider.change_publisher)
     rospy.Subscriber(microphone_topic, Int16MultiArray, lambda audio : callback(audio, 
                                                                                 recognizer,
                                                                                 publisher_provider,
@@ -112,10 +112,19 @@ if __name__ == '__main__':
     microphone_topic = config['topics']['microphone']
     sample_rate = config['settings']['sampleRate']
     language = config['settings']['language']
+    identity_data_topic = config['topics']['identityData']
+    identity_text_topic = config['topics']['identityText']
+    sample_topic = config['topics']['sample']
 
-    publisher_provider, mic_status_publisher = init_node(node_name, data_topic, text_topic, "identity_data", "identity_text", mic_status_topic)
+    publisher_provider, mic_status_publisher = init_node(node_name, 
+                                                            data_topic, 
+                                                            text_topic, 
+                                                            identity_data_topic, 
+                                                            identity_text_topic, 
+                                                            mic_status_topic)
     listener(publisher_provider,
                 mic_status_publisher, 
                 microphone_topic,
+                sample_topic,
                 sample_rate, 
                 language)

@@ -5,6 +5,9 @@ topics:
     outputText: 'output_text'
     micStatus:  'mic_status'
     identity: 'identity'
+    sample: 'sample'
+    identityData: 'identity_data'
+    identityText: 'identity_text'
 
 
 nodes:
