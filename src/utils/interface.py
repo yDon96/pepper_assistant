@@ -81,3 +81,25 @@ class VoiceHtmlInterface:
         self.voice_publisher.publish(text.answer)
         self.html_publisher.publish(text.json)
         print("[OUT]:",text.answer)
+
+class TerminalHtmlInterface:
+    '''Class implementing a voice input/terminal output interface. 
+
+    Methods
+    - get_input(self): return a string read from the voice data topic
+    - print_output(self, text): prints the text on the terminal and publish text 
+
+    '''
+    def __init__(self, rospy, voice_publisher, html_publisher, input_topic):
+        self.rospy = rospy
+        self.input_topic = input_topic
+        self.voice_publisher = voice_publisher
+        self.html_publisher = html_publisher
+
+    def get_input(self):
+        return input("[IN]:  ") 
+
+    def print_output(self,text):
+        self.voice_publisher.publish(text.answer)
+        self.html_publisher.publish(text.json)
+        print("[OUT]:",text.answer)

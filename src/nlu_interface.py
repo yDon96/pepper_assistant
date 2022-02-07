@@ -25,6 +25,10 @@ def get_interface(config, interface_type):
         voice_publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
         html_publisher = rospy.Publisher(config['topics']['htmlData'], String, queue_size=10)
         result = VoiceHtmlInterface(rospy, voice_publisher, html_publisher, config['topics']['voiceText'])
+    elif interface_type == config['interfaceType']['terminalHtml']:
+        voice_publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
+        html_publisher = rospy.Publisher(config['topics']['htmlData'], String, queue_size=10)
+        result = TerminalHtmlInterface(rospy, voice_publisher, html_publisher, config['topics']['voiceText'])
     elif interface_type == config['interfaceType']['voiceTerminal']:
         result = VoiceTerminalInterface(rospy, config['topics']['voiceText'])
     elif interface_type == config['interfaceType']['voice']:
