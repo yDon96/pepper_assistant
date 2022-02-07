@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from urllib import response
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 import rospy
 import requests
@@ -23,8 +24,29 @@ def get_text_from(rest_response):
         result += i['text'] + ' ' if 'text' in i else ''
     return result
 
+def get_status_from(rest_response):
+    result = ""
+    for i in rest_response.json():
+        result += i['status'] + ' ' if 'status' in i else ''
+    return result
+
 def get_products_from(rest_response):
-    return None
+    status=get_status_from(rest_response)
+    result = ""
+    list=[]
+    #if "view" in status:
+    for i in rest_response.json():
+        if 'custom' in i:
+            characters = "'[]"
+            records = i['custom']['product']
+            for x in range(len(characters)):
+                records = records.replace(characters[x],"")
+            record=records.split(",")
+            j=0
+            while j<len(record):
+                list.append(record[j]+","+record[j+1])
+                j+=2
+    return list
 
 def get_dialogue_response_from(rest_response):
     """
@@ -39,9 +61,10 @@ def get_dialogue_response_from(rest_response):
     result.answer = get_text_from(rest_response)
     products = get_products_from(rest_response)
 
-    data = {"text": result.answer, "products": products}
+    data = {"text": result.answer, "products": None}
     result.json = json.dumps(data)     
 
+    print(result)
     return result
 
 def handle_service(dialogue_request, server_url):
