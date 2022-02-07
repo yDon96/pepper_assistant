@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+from urllib import response
 from ros_pepper_pkg.srv import Dialogue, DialogueResponse
 import rospy
 import requests
 import yaml
 import os
+import json
 
 def get_post_message(text):
     """
@@ -16,6 +18,28 @@ def get_post_message(text):
     """
     return { "sender": 'bot', "message": f'marina: {text}' }
 
+def get_text_from(rest_response):
+    result = ""
+    for i in rest_response.json():
+        result += i['text'] + ' ' if 'text' in i else ''
+    return result
+
+def get_products_from(rest_response):
+    result = ""
+    list=[]
+    for i in rest_response.json():
+        if 'custom' in i:
+            characters = "'[]"
+            records = i['custom']['product']
+            for x in range(len(characters)):
+                records = records.replace(characters[x],"")
+            record=records.split(",")
+            j=0
+            while j<len(record):
+                list.append(record[j]+","+record[j+1])
+                j+=2
+    return list
+
 def get_dialogue_response_from(rest_response):
     """
     Generate the response of the service.
@@ -26,9 +50,11 @@ def get_dialogue_response_from(rest_response):
         Response of rest call
     """
     result = DialogueResponse()
-    result.answer = ""
-    for i in rest_response.json():
-        result.answer += i['text'] + ' ' if 'text' in i else ''
+    result.answer = get_text_from(rest_response)
+    products = get_products_from(rest_response)
+
+    data = {"text": result.answer, "products": products}
+    result.json = json.dumps(data)     
 
     return result
 

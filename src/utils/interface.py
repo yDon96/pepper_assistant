@@ -14,7 +14,7 @@ class TerminalInterface:
         return input("[IN]:  ") 
 
     def print_output(self,text):
-        print("[OUT]:",text)
+        print("[OUT]:",text.answer)
 
 class VoiceTerminalInterface:
     '''Class implementing a voice input/terminal output interface. 
@@ -34,7 +34,7 @@ class VoiceTerminalInterface:
         return result.data
 
     def print_output(self,text):
-        print("[OUT]:",text)
+        print("[OUT]:",text.answer)
 
 class VoiceInterface:
     '''Class implementing a voice input/terminal output interface. 
@@ -55,5 +55,51 @@ class VoiceInterface:
         return result.data
 
     def print_output(self,text):
-        self.publisher.publish(text)
-        print("[OUT]:",text)
+        self.publisher.publish(text.answer)
+        print("[OUT]:",text.answer)
+
+class VoiceHtmlInterface:
+    '''Class implementing a voice input/terminal output interface. 
+
+    Methods
+    - get_input(self): return a string read from the voice data topic
+    - print_output(self, text): prints the text on the terminal and publish text 
+
+    '''
+    def __init__(self, rospy, voice_publisher, html_publisher, input_topic):
+        self.rospy = rospy
+        self.input_topic = input_topic
+        self.voice_publisher = voice_publisher
+        self.html_publisher = html_publisher
+
+    def get_input(self):
+        result = rospy.wait_for_message(self.input_topic, String)
+        print(f"[IN]:{result.data}") 
+        return result.data
+
+    def print_output(self,text):
+        self.voice_publisher.publish(text.answer)
+        self.html_publisher.publish(text.json)
+        print("[OUT]:",text.answer)
+
+class TerminalHtmlInterface:
+    '''Class implementing a voice input/terminal output interface. 
+
+    Methods
+    - get_input(self): return a string read from the voice data topic
+    - print_output(self, text): prints the text on the terminal and publish text 
+
+    '''
+    def __init__(self, rospy, voice_publisher, html_publisher, input_topic):
+        self.rospy = rospy
+        self.input_topic = input_topic
+        self.voice_publisher = voice_publisher
+        self.html_publisher = html_publisher
+
+    def get_input(self):
+        return input("[IN]:  ") 
+
+    def print_output(self,text):
+        self.voice_publisher.publish(text.answer)
+        self.html_publisher.publish(text.json)
+        print("[OUT]:",text.answer)
