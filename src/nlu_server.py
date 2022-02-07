@@ -24,17 +24,9 @@ def get_text_from(rest_response):
         result += i['text'] + ' ' if 'text' in i else ''
     return result
 
-def get_status_from(rest_response):
-    result = ""
-    for i in rest_response.json():
-        result += i['status'] + ' ' if 'status' in i else ''
-    return result
-
 def get_products_from(rest_response):
-    status=get_status_from(rest_response)
     result = ""
     list=[]
-    #if "view" in status:
     for i in rest_response.json():
         if 'custom' in i:
             characters = "'[]"
@@ -61,7 +53,7 @@ def get_dialogue_response_from(rest_response):
     result.answer = get_text_from(rest_response)
     products = get_products_from(rest_response)
 
-    data = {"text": result.answer, "products": None}
+    data = {"text": result.answer, "products": products}
     result.json = json.dumps(data)     
 
     return result
