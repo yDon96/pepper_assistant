@@ -33,7 +33,7 @@ def add_table(soup, list):
         flex_container.append(BeautifulSoup(flex_item, 'html.parser'))
         span_table = soup.find('span',id='table')
         table = generate_table(list)
-        span_table.append(BeautifulSoup(table))
+        span_table.append(BeautifulSoup(table, features="html.parser"))
 
     return soup
 
