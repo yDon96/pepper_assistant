@@ -111,6 +111,21 @@ nlu:
     - [tommy](user): that sounds good
     - [asia](user): correct
 
+- intent: empty_list
+  examples: |
+    - [marina](user): empty my list
+    - [sabrina](user): empty my list, please
+    - [alessia](user): can you remove all products from my list?
+    - [alessandro](user): remove all products from my list
+    - [youssef](user): please, empty my shopping list
+    - [giacomo](user): delete all the items from my list
+    - [alex](user): can you delete all the items from my list?
+    - [marina](user): clear my list
+    - [sabrina](user): i want to remove all the items from my list
+    - [marina](user): i want to delete my shopping list
+    - [antonio](user): delete my shopping list
+
+
 - intent: add_to_list
   examples: |
     - [Pippo](user): Good morning, I want to add something to my [shopping list](shopping_type)

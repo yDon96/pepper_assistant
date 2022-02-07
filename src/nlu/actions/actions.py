@@ -115,21 +115,9 @@ def updateProduct(dispatcher, tracker):
 def viewListDB(dispatcher, tracker):
     params = configDB()
     conn = psycopg2.connect(**params)
-    # Create a new cursor
     cur = conn.cursor()
-    #current_shoppinglist = next(tracker.get_latest_entity_values("shopping_type"), None)
     current_user = next(tracker.get_latest_entity_values("user"), None)
-    #Restituisce NONE se non trova l'entità.
-    # if not current_shoppinglist:
-    #     msg = f"I don't understand. Can you repeat?"
-    #     dispatcher.utter_message(text=msg)
-    #     return []
-    # if current_shoppinglist :
-        # msg = f"Ok, I found an entity shopping list!"
-        # dispatcher.utter_message(text=msg)
-        #questo lo printa sul terminale "Rasa run actions"
-    msg = f"Your shopping list is shown on my tablet"
-    #dispatcher.utter_message(text=msg)
+    
     sql_Query = "select prodotto, quantità from shopping_list where nome =%s"
     nome = (str(current_user), )
     cur = conn.cursor()
@@ -193,7 +181,35 @@ def removeElem(dispatcher,tracker):
     except(Exception,psycopg2.Error) as err:
         print("Operation failed with error:",err)
 
+def emptyListDB(dispatcher, tracker):
+    name = str(next(tracker.get_latest_entity_values("user"),None))
+    params = configDB()
+    conn = psycopg2.connect(**params)
+    cur = conn.cursor()
+    
+    sql_Query = "select * from shopping_list where nome = %s"
+    cur = conn.cursor()
+    cur.execute(sql_Query,(name,))
+    print(2)
+    records = cur.fetchall()  
+    if len(records)==0:
+        msg4 = f"Your list is already empty!"
+       
+    else:
+        cur.execute("""delete from shopping_list where nome = %s """,(name,))
+        conn.commit()
+        msg4 = f"Your list has been deleted!" 
+    
+    dispatcher.utter_message(msg4)
+    cur.close()
+    conn.close()
 
+
+def emptyList(dispatcher, tracker):
+    try:
+        emptyListDB(dispatcher, tracker)
+    except(Exception,psycopg2.Error) as err:
+        print("Operation failed with error:",err)
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
 class ActionRemove(Action):
@@ -232,3 +248,11 @@ class ActionUpdate(Action):
         updateProduct(dispatcher,tracker)
         return [AllSlotsReset()]
 
+class ActionEmpty(Action):
+    def name(self)->Text:
+        return "action_empty"       
+    def run(self, dispatcher: CollectingDispatcher, 
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        emptyList(dispatcher,tracker)
+        return []
