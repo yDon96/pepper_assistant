@@ -27,7 +27,7 @@ class PublisherProvider:
             return self.identity_data_publisher, self.identity_text_publisher
 
     def change_publisher(self, is_identity):
-        self.is_identity = is_identity
+        self.is_identity = is_identity.data
 
 def callback(audio, recognizer, publisher_provider, mic_status_publisher, sample_rate, language):
     """

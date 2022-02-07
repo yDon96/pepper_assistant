@@ -6,7 +6,7 @@
         <node pkg="ros_pepper_pkg" name="rasa_server" type="rasa_server.sh" output="screen" args="src/nlu/" />
         <node pkg="ros_pepper_pkg" type="nlu_interface.py" name="nlu_interface" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
         <node pkg="ros_pepper_pkg" type="nlu_server.py" name="nlu_server" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
-            <node pkg="ros_pepper_pkg" type="speaker_identification.py" name="speaker_identification" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node pkg="ros_pepper_pkg" type="speaker_identification.py" name="speaker_identification" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
         <node pkg="ros_pepper_pkg" type="voice_recorder.py" name="voice_recorder" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
         <node pkg="ros_pepper_pkg" type="asr.py" name="asr" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
         <node pkg="ros_pepper_pkg" type="tts_interface.py" name="tts_interface" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
