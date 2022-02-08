@@ -1,4 +1,5 @@
 string input_text
+string identity
 ---
 string answer
 string json

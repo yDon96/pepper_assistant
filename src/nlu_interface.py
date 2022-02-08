@@ -34,6 +34,9 @@ def get_interface(config, interface_type):
     elif interface_type == config['interfaceType']['voice']:
         publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
         result = VoiceInterface(rospy, publisher, config['topics']['voiceText'])
+    elif interface_type == config['interfaceType']['voiceIdentity']:
+        publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
+        result = VoiceIdentityInterface(rospy, publisher, config['topics']['voiceText'], config['topics']['identity'])
 
     return result
 
@@ -49,7 +52,7 @@ def main(service, interface):
         Interface that handle input/output
     """
     while not rospy.is_shutdown():
-        message = interface.get_input()
+        message, identity = interface.get_input()
         if message == 'exit': 
             break
         try:

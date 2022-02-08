@@ -5,6 +5,10 @@ topics:
     outputText: 'output_text'
     htmlData: 'html_data'
     micStatus:  'mic_status'
+    identity: 'identity'
+    sample: 'sample'
+    identityData: 'identity_data'
+    identityText: 'identity_text'
 
 
 nodes:
@@ -42,6 +46,7 @@ interfaceType:
     terminalHtml: 'terminal_html'
     voiceTerminal: 'voice_terminal'
     voice: 'voice'
+    voiceIdentity: 'voice_identity'
 
 tts:
     speechRate: 100

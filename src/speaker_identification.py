@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import rospy
-from std_msgs.msg import Int16MultiArray
+from std_msgs.msg import Int16MultiArray, String, Bool
 import numpy as np
 import pickle
 import os
@@ -37,7 +37,31 @@ def get_model(path):
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
     return get_deep_speaker(os.path.join(REF_PATH, path))
 
-def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold):
+def process_audio(data, sample_rate, num_fbanks):
+    result = np.array(data)
+
+    # to float32
+    result = result.astype(np.float32, order='C') / 32768.0
+
+    # Processing
+    result = get_mfcc(result, sample_rate, num_fbanks)
+    return result
+
+def get_label_from(prediction, identification_threshold):
+    result = None
+
+    if len(X) > 0:
+        # Distance between the sample and the support set
+        emb_voice = np.repeat(prediction, len(X), 0)
+
+        cos_dist = batch_cosine_similarity(np.array(X), emb_voice)
+        
+        # Matching
+        result = dist2id(cos_dist, y, identification_threshold, mode='avg')
+
+    return result
+
+def callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold, sample_phrases, identity_publisher, sample_publisher, speaker_publisher):
     """
     Callback called each time there is a new record.
 
@@ -54,36 +78,43 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
     identification_threshold
         The min value to assign a correct prediction
     """
-    audio_data = np.array(audio.data)
+    processed_audio = process_audio(audio.data, sample_rate, num_fbanks)
 
-    # to float32
-    audio_data = audio_data.astype(np.float32, order='C') / 32768.0
+    prediction = speaker_model.predict(np.expand_dims(processed_audio, 0))
 
-    # Processing
-    ukn = get_mfcc(audio_data, sample_rate, num_fbanks)
-
-    # Prediction
-    ukn = speaker_model.predict(np.expand_dims(ukn, 0))
-
-    if len(X) > 0:
-        # Distance between the sample and the support set
-        emb_voice = np.repeat(ukn, len(X), 0)
-
-        cos_dist = batch_cosine_similarity(np.array(X), emb_voice)
-        
-        # Matching
-        id_label = dist2id(cos_dist, y, identification_threshold, mode='avg')
+    id_label = get_label_from(prediction, identification_threshold)
     
     if len(X) == 0 or id_label is None:
-        c = input("Voce non conosciuta. Vuoi inserire un nuovo campione? (S/N):")
-        if c.lower() == 's':
-            name = input("Inserisci il nome dello speaker:").lower()
-            X.append(ukn[0])
-            y.append(name)
-    else:
-        print("Ha parlato:", id_label)
+        sample_publisher.publish(True)
 
-def init_node(node_name, dataset_path):
+        predictions = []
+
+        predictions.append(prediction[0])
+        
+        speaker_publisher.publish("I don't recognize your voice, do you want to register?")
+        response = rospy.wait_for_message("identity_text", String)
+
+        if "yes" in response.data.lower():   
+            speaker_publisher.publish("Repeat the following sentences.")
+            for phrase in sample_phrases:
+                speaker_publisher.publish(phrase)
+                result = rospy.wait_for_message("identity_data", Int16MultiArray)
+                processed_audio = process_audio(result.data, sample_rate, num_fbanks)
+                prediction = speaker_model.predict(np.expand_dims(processed_audio, 0))
+                predictions.append(prediction[0])
+
+        
+        speaker_publisher.publish("Perfect. Tell me your name to finish the registration.")
+        name = rospy.wait_for_message("identity_text", String)
+        X.extend(predictions)
+        y.extend([name.data]*len(predictions))
+        sample_publisher.publish(False)
+        identity_publisher.publish(name)
+    else:
+        identity_publisher.publish(id_label)
+        print("The user is:", id_label)
+
+def init_node(node_name, dataset_path, identity_topic, sample_topic, output_topic):
     """
     Init the node.
 
@@ -93,14 +124,17 @@ def init_node(node_name, dataset_path):
         Name assigned to the node
     """
     rospy.init_node(node_name, anonymous=True)
+    identity_publisher = rospy.Publisher(identity_topic, String, queue_size=1)
+    sample_publisher = rospy.Publisher(sample_topic, Bool, queue_size=1)
+    speaker_publisher = rospy.Publisher(output_topic, String, queue_size=1)
     rospy.on_shutdown(lambda:save_dataset(dataset_path))
     predictions, labels = load_dataset(dataset_path)
     X.extend(predictions)
     y.extend(labels)
-    print(X)
-    print(y)
 
-def listener(sample_rate, num_fbanks, model_path, identification_threshold, data_topic):
+    return identity_publisher, sample_publisher, speaker_publisher
+
+def listener(sample_rate, num_fbanks, model_path, sample_phrases, identity_publisher, sample_publisher, speaker_publisher, identification_threshold, data_topic):
     """
     Main function of the node.
 
@@ -118,8 +152,17 @@ def listener(sample_rate, num_fbanks, model_path, identification_threshold, data
         Topic in which is published audio data
     """
     speaker_model = get_model(model_path)
-    rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, sample_rate, num_fbanks, speaker_model, identification_threshold))
+    rospy.Subscriber(data_topic, Int16MultiArray, lambda audio : callback(audio, 
+                                                                            sample_rate, 
+                                                                            num_fbanks, 
+                                                                            speaker_model, 
+                                                                            identification_threshold,
+                                                                            sample_phrases,
+                                                                            identity_publisher, 
+                                                                            sample_publisher,
+                                                                            speaker_publisher))
     rospy.spin()
+        
         
 if __name__ == '__main__':
     REF_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -132,11 +175,24 @@ if __name__ == '__main__':
     model_path = config['models']['defaults']
     identification_threshold = config['settings']['identificationThreshold']
     data_topic = config['topics']['voiceData']
+    identity_topic = config['topics']['identity']
+    sample_topic = config['topics']['sample']
+    output_topic = config['topics']['outputText']
     dataset_path = os.path.join(REF_PATH, config['models']['dataset'])
+    sample_phrases = ["how are you?", "add bread to my shopping list","change my shopping list"]
 
-    init_node(node_name, dataset_path)
+
+    identity_publisher, sample_publisher, speaker_publisher = init_node(node_name, 
+                                                                        dataset_path, 
+                                                                        identity_topic, 
+                                                                        sample_topic, 
+                                                                        output_topic)
     listener(sample_rate, 
                 num_fbanks, 
                 model_path, 
+                sample_phrases, 
+                identity_publisher, 
+                sample_publisher, 
+                speaker_publisher,
                 identification_threshold, 
                 data_topic)
