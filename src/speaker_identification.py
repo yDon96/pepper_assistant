@@ -91,7 +91,7 @@ def callback(audio, sample_rate, num_fbanks, speaker_model, identification_thres
 
         predictions.append(prediction[0])
         
-        speaker_publisher.publish("I don't recognize your voice, do you want to register? Please say yes or no.")
+        speaker_publisher.publish("I don't recognize your voice, do you want to register?")
         response = rospy.wait_for_message("identity_text", String)
 
         if "yes" in response.data.lower():   
