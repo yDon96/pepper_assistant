@@ -60,7 +60,7 @@ def main(service, interface):
         if message == 'exit': 
             break
         try:
-            bot_answer = service(message)
+            bot_answer = service(message,identity)
             interface.print_output(bot_answer)
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)

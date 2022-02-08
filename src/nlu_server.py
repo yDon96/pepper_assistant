@@ -33,11 +33,12 @@ def get_products_from(rest_response):
             records = i['custom']['product']
             for x in range(len(characters)):
                 records = records.replace(characters[x],"")
-            record=records.split(",")
-            j=0
-            while j<len(record):
-                list.append(record[j]+","+record[j+1])
-                j+=2
+            if "None" not in records:
+                record=records.split(",")
+                j=0
+                while j<len(record):
+                    list.append(record[j]+","+record[j+1])
+                    j+=2
     return list
 
 def get_dialogue_response_from(rest_response):
