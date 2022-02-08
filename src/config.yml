@@ -22,7 +22,7 @@ nodes:
     ttsInterface: 'tts_interface'
     htmlInterface: 'html_interface'
     htmlServer: 'wb_server'
-
+    tabletServer: 'tablet_server'
 
 settings:
     language: 'en-US'
