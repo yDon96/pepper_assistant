@@ -47,6 +47,7 @@ interfaceType:
     voiceTerminal: 'voice_terminal'
     voice: 'voice'
     voiceIdentity: 'voice_identity'
+    voiceIdentityHtml: 'voice_identity_html'
 
 tts:
     speechRate: 100
