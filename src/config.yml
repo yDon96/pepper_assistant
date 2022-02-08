@@ -3,6 +3,7 @@ topics:
     voiceData: 'voice_data'
     voiceText: 'voice_txt'
     outputText: 'output_text'
+    htmlData: 'html_data'
     micStatus:  'mic_status'
     identity: 'identity'
     sample: 'sample'
@@ -19,7 +20,9 @@ nodes:
     pyTts: 'py_tts'
     pepperTts: 'pepper_tts'
     ttsInterface: 'tts_interface'
-    
+    htmlInterface: 'html_interface'
+    htmlServer: 'wb_server'
+
 
 settings:
     language: 'en-US'
@@ -39,9 +42,16 @@ nlu:
 
 interfaceType:
     terminal: 'terminal'
+    voiceHtml: 'voice_html'
+    terminalHtml: 'terminal_html'
     voiceTerminal: 'voice_terminal'
     voice: 'voice'
     voiceIdentity: 'voice_identity'
 
 tts:
-    speechRate: 150
+    speechRate: 100
+
+html:
+    template: 'html/template.html'
+    output: 'html/index.html'
+

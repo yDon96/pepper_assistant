@@ -1,0 +1,6 @@
+<launch>
+    <param name="html_service_tag" type="str" value="htmlServer"/>
+    <node pkg="ros_pepper_pkg" name="html_server" type="html_server.sh" output="screen" args="src/html/" />
+    <node pkg="ros_pepper_pkg" type="html_interface.py" name="html_interface" output="screen" />
+    <node pkg="ros_pepper_pkg" type="html_server.py" name="wb_server" output="screen"/>
+</launch>
