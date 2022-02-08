@@ -21,6 +21,14 @@ def get_interface(config, interface_type):
     result = None
     if interface_type == config['interfaceType']['terminal']:
         result = TerminalInterface()
+    elif interface_type == config['interfaceType']['voiceHtml']:
+        voice_publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
+        html_publisher = rospy.Publisher(config['topics']['htmlData'], String, queue_size=10)
+        result = VoiceHtmlInterface(rospy, voice_publisher, html_publisher, config['topics']['voiceText'])
+    elif interface_type == config['interfaceType']['terminalHtml']:
+        voice_publisher = rospy.Publisher(config['topics']['outputText'], String, queue_size=10)
+        html_publisher = rospy.Publisher(config['topics']['htmlData'], String, queue_size=10)
+        result = TerminalHtmlInterface(rospy, voice_publisher, html_publisher, config['topics']['voiceText'])
     elif interface_type == config['interfaceType']['voiceTerminal']:
         result = VoiceTerminalInterface(rospy, config['topics']['voiceText'])
     elif interface_type == config['interfaceType']['voice']:
@@ -46,7 +54,7 @@ def main(service, interface):
             break
         try:
             bot_answer = service(message)
-            interface.print_output(bot_answer.answer)
+            interface.print_output(bot_answer)
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
 

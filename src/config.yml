@@ -38,6 +38,8 @@ nlu:
 
 interfaceType:
     terminal: 'terminal'
+    voiceHtml: 'voice_html'
+    terminalHtml: 'terminal_html'
     voiceTerminal: 'voice_terminal'
     voice: 'voice'
 

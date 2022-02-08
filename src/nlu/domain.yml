@@ -11,7 +11,7 @@ intents:
 - deny
 - mood_great
 - mood_unhappy
-- bot_challenge
+- empty_list
 - add_to_list
 - view_the_list
 - quantity
@@ -64,13 +64,23 @@ responses:
   - text: Please, insert the new quantity for {product}.
   utter_what_to_do:
   - text: I can add, remove or update a product of your shopping list or show you your list. What do you want me to do?
-  
+  utter_view_list:
+  - custom: 
+     text: "{text}"
+     product: "{product}"
+     status: "{status}"
+  utter_update_list:
+  - custom: 
+     text: "{text}"
+     product: "{product}"
+     status: "{status}"
   
 actions:
 - action_add
 - action_remove
 - action_update
 - action_view
+- action_empty
 - utter_ask_add_form_product
 - utter_ask_add_form_quantity
 - utter_ask_update_form_product
@@ -82,6 +92,8 @@ actions:
 - utter_happy_presentation
 - utter_sad_presentation
 - utter_what_to_do
+- utter_view_list
+- utter_update_list
 
 forms:
   add_form:

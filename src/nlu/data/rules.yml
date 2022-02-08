@@ -2,6 +2,13 @@ version: "2.0"
 
 rules:
 
+- rule: empty list
+  steps:
+  - intent: empty_list
+  - action: action_empty
+  - action: utter_what_to_do
+
+
 - rule: Remove from list
   steps: 
   - intent: remove_from_list

@@ -23,7 +23,6 @@ def callback(message, html_generator, html_service):
     html_service
         Service to call
     """
-    print(message)
     text, product_list = get_value_from_json(message.data)
     html_generator.generate_html(text, product_list)
     try:
